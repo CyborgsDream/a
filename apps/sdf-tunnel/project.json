@@ -1,0 +1,9 @@
+{
+  "title": "SDF Neon Tunnel",
+  "description": "WebGL ray-marched neon tunnel (signed distance fields) with soft shadows and glow.",
+  "tags": ["webgl", "sdf", "raymarch", "demoscene"],
+  "status": "alpha",
+  "shared": "v1",
+  "updated": "2025-11-06",
+  "path": "apps/sdf-tunnel/index.html"
+}
