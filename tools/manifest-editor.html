@@ -1,0 +1,71 @@
+<!--
+@project: a/tools — manifest editor
+@version: v0.1.0
+@date: 2025-11-04 (Europe/Warsaw)
+@blurb: Pure-HTML editor for projects.json (no backend). Stores in localStorage; copy back into the repo.
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Manifest Editor (projects.json)</title>
+<style>
+ body{font:14px system-ui;margin:20px}
+ textarea{width:100%;height:60vh}
+ .row{display:flex;gap:8px;margin:10px 0}
+ button{padding:8px 12px}
+ .hint{color:#666}
+</style>
+</head>
+<body>
+<h1>Manifest Editor</h1>
+<p class="hint">Edit <code>projects.json</code> safely in the browser (no server). Use “Copy JSON” and paste into your repo.</p>
+<div class="row">
+  <button id="load">Load current /projects.json</button>
+  <button id="sample">Insert sample</button>
+  <button id="save">Save to localStorage</button>
+  <button id="copy">Copy JSON</button>
+</div>
+<textarea id="box"></textarea>
+<script>
+const key='manifest.projects.json';
+const box=document.getElementById('box');
+
+document.getElementById('load').onclick=async()=>{
+  try{
+    const r=await fetch('../projects.json',{cache:'no-store'});
+    box.value=await r.text();
+  }catch{
+    alert('Could not load ../projects.json. Paste yours or use sample.');
+  }
+};
+
+document.getElementById('sample').onclick=()=>{
+  box.value = JSON.stringify([{
+    slug:"hello",title:"Hello App",description:"Tiny sample mini-app",
+    tags:["sample","starter"],status:"alpha",
+    path:"apps/hello/index.html",shared:"v1",
+    updated:new Date().toISOString().slice(0,10)
+  }], null, 2);
+};
+
+document.getElementById('save').onclick=()=>{
+  localStorage.setItem(key, box.value);
+  alert('Saved to localStorage.');
+};
+
+document.getElementById('copy').onclick=async()=>{
+  try{
+    await navigator.clipboard.writeText(box.value);
+    alert('Copied! Paste into /projects.json in your repo.');
+  }catch{
+    alert('Copy failed. Select all and copy manually.');
+  }
+};
+
+// preload from localStorage if present
+const saved=localStorage.getItem(key);
+if(saved) box.value=saved;
+</script>
+</body>
+</html>

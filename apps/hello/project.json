@@ -1,0 +1,8 @@
+{
+  "title": "Hello App",
+  "description": "Tiny sample mini-app to prove the hub works.",
+  "tags": ["sample", "starter"],
+  "status": "alpha",
+  "shared": "v1",
+  "updated": "2025-11-04"
+}
