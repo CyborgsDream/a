@@ -1,0 +1,9 @@
+{
+  "title": "Hills & Forest",
+  "description": "Meters-true grassy hills (1 unit = 1 meter) with instanced trees and a free-flight camera.",
+  "tags": ["threejs","terrain","trees","freefly"],
+  "status": "alpha",
+  "shared": "v1",
+  "updated": "2025-11-06",
+  "path": "apps/hills-forest/index.html"
+}
