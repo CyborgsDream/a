@@ -1,0 +1,12 @@
+[
+  {
+    "slug": "hello",
+    "title": "Hello App",
+    "description": "Tiny sample mini-app to prove the hub works.",
+    "tags": ["sample", "starter"],
+    "status": "alpha",
+    "path": "apps/hello/index.html",
+    "shared": "v1",
+    "updated": "2025-11-04"
+  }
+]

@@ -1,0 +1,38 @@
+<!--
+@project: a/hello — sample mini-app
+@version: v0.1.0
+@date: 2025-11-04 (Europe/Warsaw)
+@blurb: Minimal app importing shared v1 via an import map (HTML5-only).
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>a/hello</title>
+<script type="importmap">{
+  "imports": { "@shared/": "../../shared/v1/" }
+}</script>
+<style>
+  body{margin:0;background:#000;color:#ddd;font:14px system-ui;display:grid;place-items:center;height:100dvh}
+  canvas{image-rendering:pixelated}
+</style>
+</head>
+<body>
+<canvas id="c" width="320" height="200"></canvas>
+<script type="module">
+import { $$ } from '@shared/utils.js';
+const ctx = document.getElementById('c').getContext('2d');
+const w = 320, h = 200, img = ctx.createImageData(w,h);
+function put(x,y,r,g,b){ const i=(y*w+x)*4; img.data[i]=r; img.data[i+1]=g; img.data[i+2]=b; img.data[i+3]=255; }
+function frame(t){
+  for(let y=0;y<h;y++) for(let x=0;x<w;x++){
+    const r=(x^y^((t/10)|0))&255;
+    put(x,y,r,(x*2+y+t/3)&255,(y*3+t/5)&255);
+  }
+  ctx.putImageData(img,0,0);
+  requestAnimationFrame(frame);
+}
+$$.onReady(()=>requestAnimationFrame(frame));
+</script>
+</body>
+</html>
