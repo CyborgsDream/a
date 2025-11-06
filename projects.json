@@ -8,5 +8,15 @@
     "path": "apps/hello/index.html",
     "shared": "v1",
     "updated": "2025-11-04"
+  },
+  {
+    "slug": "sdf-tunnel",
+    "title": "SDF Neon Tunnel",
+    "description": "WebGL ray-marched neon tunnel (SDF) with soft shadows and glow.",
+    "tags": ["webgl","sdf","raymarch","demoscene"],
+    "status": "alpha",
+    "path": "apps/sdf-tunnel/index.html",
+    "shared": "v1",
+    "updated": "2025-11-06"
   }
 ]
