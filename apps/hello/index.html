@@ -127,6 +127,13 @@ $$.onReady(() => {
   );
   scene.add(backdrop);
 
+  const backgroundTarget = new THREE.WebGLRenderTarget(
+    window.innerWidth * renderer.getPixelRatio(),
+    window.innerHeight * renderer.getPixelRatio(),
+    { depthBuffer: false }
+  );
+  backgroundTarget.texture.colorSpace = THREE.SRGBColorSpace;
+
   const portalMaterial = new THREE.ShaderMaterial({
     uniforms: {
       uTime: { value: 0 },
@@ -174,20 +181,65 @@ $$.onReady(() => {
   );
   scene.add(torus);
 
-  const orb = new THREE.Mesh(
-    new THREE.IcosahedronGeometry(0.82, 3),
-    new THREE.MeshPhysicalMaterial({
-      color: 0x74fff8,
-      metalness: 0.1,
-      roughness: 0.08,
-      emissive: 0x0099ff,
-      emissiveIntensity: 1.5,
-      transmission: 0.85,
-      thickness: 1.4,
-      clearcoat: 1,
-      clearcoatRoughness: 0.05
-    })
-  );
+  const orbGeometry = new THREE.IcosahedronGeometry(0.82, 4);
+  const orbMaterial = new THREE.ShaderMaterial({
+    uniforms: {
+      uSceneTexture: { value: backgroundTarget.texture },
+      uStrength: { value: 0.18 },
+      uTime: { value: 0 },
+      uGlowColor: { value: new THREE.Color(0x74fff8) },
+      uHighlightColor: { value: new THREE.Color(0x00baff) }
+    },
+    vertexShader: `
+      varying vec3 vWorldPosition;
+      varying vec3 vWorldNormal;
+      varying vec4 vClipPosition;
+      void main(){
+        vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+        vWorldPosition = worldPosition.xyz;
+        vWorldNormal = normalize(mat3(modelMatrix) * normal);
+        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+        vClipPosition = projectionMatrix * mvPosition;
+        gl_Position = vClipPosition;
+      }
+    `,
+    fragmentShader: `
+      precision highp float;
+      varying vec3 vWorldPosition;
+      varying vec3 vWorldNormal;
+      varying vec4 vClipPosition;
+      uniform sampler2D uSceneTexture;
+      uniform float uStrength;
+      uniform float uTime;
+      uniform vec3 uGlowColor;
+      uniform vec3 uHighlightColor;
+      void main(){
+        vec3 normal = normalize(vWorldNormal);
+        vec3 viewDir = normalize(cameraPosition - vWorldPosition);
+        float viewDot = max(dot(normal, viewDir), 0.0);
+        float fresnel = pow(1.0 - viewDot, 2.8);
+
+        vec2 ndc = vClipPosition.xy / vClipPosition.w;
+        vec2 uv = ndc * 0.5 + 0.5;
+        float distortion = uStrength * (1.0 - pow(viewDot, 1.2));
+        vec2 offsetDir = normal.xy;
+        float offsetLen = max(length(offsetDir), 0.0001);
+        vec2 offset = offsetDir / offsetLen * distortion;
+        vec2 sampleUv = clamp(uv + offset, vec2(0.001), vec2(0.999));
+        vec3 sceneColor = texture(uSceneTexture, sampleUv).rgb;
+
+        float caustic = sin(uTime * 1.4 + normal.y * 6.0 + normal.x * 3.5) * 0.25 + 0.25;
+        vec3 glow = uGlowColor * (0.35 + fresnel * 1.6);
+        vec3 highlight = uHighlightColor * (0.2 + caustic * 0.6);
+        vec3 color = sceneColor * (0.9 + fresnel * 0.2) + glow * fresnel + highlight * (1.0 - abs(normal.z));
+        float alpha = 0.72 + fresnel * 0.25;
+        gl_FragColor = vec4(color, alpha);
+      }
+    `,
+    transparent: true
+  });
+
+  const orb = new THREE.Mesh(orbGeometry, orbMaterial);
   scene.add(orb);
 
   const curve = new THREE.CatmullRomCurve3([
@@ -215,15 +267,19 @@ $$.onReady(() => {
   function onResize(){
     const w = window.innerWidth;
     const h = window.innerHeight;
+    const dpr = window.devicePixelRatio;
+    renderer.setPixelRatio(dpr);
     renderer.setSize(w, h);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
+    backgroundTarget.setSize(w * dpr, h * dpr);
   }
   window.addEventListener('resize', onResize);
 
   function animate(){
     const t = clock.getElapsedTime();
     portalMaterial.uniforms.uTime.value = t;
+    orbMaterial.uniforms.uTime.value = t;
 
     torus.rotation.x = t * 0.42;
     torus.rotation.y = t * 0.24;
@@ -246,6 +302,12 @@ $$.onReady(() => {
     camera.position.y = 0.55 + Math.sin(t * 0.42) * 0.18;
     camera.position.z = 5.1 + Math.cos(t * 0.2) * 0.4;
     camera.lookAt(0, 0.1, 0);
+
+    orb.visible = false;
+    renderer.setRenderTarget(backgroundTarget);
+    renderer.render(scene, camera);
+    renderer.setRenderTarget(null);
+    orb.visible = true;
 
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
