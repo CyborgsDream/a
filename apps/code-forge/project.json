@@ -1,0 +1,8 @@
+{
+  "title": "Code Forge SplitMerge",
+  "description": "Local-first tool to split merged AI code blocks into files and merge directories back to text.",
+  "tags": ["fs-access", "productivity", "ai"],
+  "status": "alpha",
+  "shared": "none",
+  "updated": "2025-11-07"
+}

@@ -38,5 +38,15 @@
     "path": "apps/relax/index.html",
     "shared": "v1",
     "updated": "2025-11-07"
+  },
+  {
+    "slug": "code-forge",
+    "title": "Code Forge SplitMerge",
+    "description": "Local-first tool to split merged AI code blocks into files and merge directories back to text.",
+    "tags": ["fs-access","productivity","ai"],
+    "status": "alpha",
+    "path": "apps/code-forge/index.html",
+    "shared": "none",
+    "updated": "2025-11-07"
   }
 ]
