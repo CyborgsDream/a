@@ -13,6 +13,14 @@
 <style>
 :root{--bg:#0b0f14;--fg:#e9eef4;--muted:#9fb0c3;--card:#121821;--accent:#ff7a00}
 html,body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui}
+body{position:relative;min-height:100vh;overflow-x:hidden}
+.bg{position:fixed;inset:0;pointer-events:none;z-index:0;perspective:900px;transform-style:preserve-3d}
+.bg__grid{position:absolute;top:50%;left:50%;width:200vmax;height:200vmax;transform:translate3d(-50%,-50%,var(--depth)) rotateX(72deg);background-image:repeating-linear-gradient(transparent 0 42px,rgba(79,144,255,.22) 42px 44px),repeating-linear-gradient(90deg,transparent 0 42px,rgba(255,122,0,.22) 42px 44px);background-size:64px 64px;animation:bg-grid-scroll var(--speed) linear infinite;opacity:.45;filter:drop-shadow(0 0 12px rgba(13,21,32,.6))}
+.bg__grid--near{--depth:-160px;--speed:16s;opacity:.65}
+.bg__grid--far{--depth:-420px;--speed:28s;background-size:82px 82px;opacity:.3}
+.bg__glow{position:absolute;inset:-35%;background:radial-gradient(circle at 65% 45%,rgba(255,122,0,.35),transparent 55%),radial-gradient(circle at 20% 20%,rgba(79,144,255,.4),transparent 50%),radial-gradient(circle at 80% 80%,rgba(75,217,176,.35),transparent 55%);transform:translateZ(-680px) scale(1);mix-blend-mode:screen;animation:bg-glow-pulse 20s ease-in-out infinite;opacity:.55}
+@keyframes bg-grid-scroll{from{background-position:0 0,0 0}to{background-position:0 128px,128px 0}}
+@keyframes bg-glow-pulse{0%,100%{transform:translateZ(-680px) scale(1)}50%{transform:translateZ(-680px) scale(1.12)}}
 header{padding:24px 16px;max-width:1100px;margin:auto}
 h1{margin:0 0 6px;font-size:28px}
 .sub{color:var(--muted)}
@@ -26,9 +34,15 @@ main{max-width:1100px;margin:12px auto;padding:0 16px;display:grid;grid-template
 .tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;background:#1b2330;color:var(--muted);margin-right:6px}
 .badge{font-size:12px;background:#1b2330;border:1px solid #2a3340;padding:2px 8px;border-radius:999px}
 footer{max-width:1100px;margin:32px auto 24px;padding:0 16px;color:var(--muted);font-size:13px}
+header,main,footer{position:relative;z-index:1}
 </style>
 </head>
 <body>
+<div class="bg">
+  <div class="bg__grid bg__grid--near"></div>
+  <div class="bg__grid bg__grid--far"></div>
+  <div class="bg__glow"></div>
+</div>
 <header>
   <h1>a <span style="color:var(--accent)">alpha workspace</span></h1>
   <div class="sub">One repo, many mini-apps. Versioned shared code at <code>/shared/vX</code>. Pure HTML5.</div>
