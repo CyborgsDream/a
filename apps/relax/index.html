@@ -537,6 +537,7 @@ const cachedDefaults = new Map();
 const customSets = new Map();
 let currentLang = FALLBACK_LANG;
 let AFF = [];
+let playing=false, stopFlag=false;
 function generateAffirmations(lang){
   const pack = LANG_PACKS[lang] || LANG_PACKS[FALLBACK_LANG];
   const stems = pack.stems;
@@ -884,7 +885,6 @@ document.addEventListener('keydown', resumeIfSuspended);
 /* ===========================
    Player Controller
 =========================== */
-let playing=false, stopFlag=false;
 let order = [];
 let playCursor = 0;
 function setAudioStatus(key){
