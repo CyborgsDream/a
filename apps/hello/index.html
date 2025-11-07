@@ -20,8 +20,8 @@
   body{
     margin:0;
     min-height:100dvh;
-    background:radial-gradient(circle at 50% 20%,rgba(38,15,75,.8),rgba(6,2,20,.95) 45%,rgba(2,0,10,1));
-    color:#f8f3ff;
+    background:radial-gradient(circle at 50% -10%,rgba(10,40,82,.8),rgba(4,14,34,.92) 42%,rgba(1,4,12,1));
+    color:#f1f7ff;
     overflow:hidden;
   }
   #scene{
@@ -45,7 +45,7 @@
     position:absolute;
     inset:20% 25%;
     border-radius:32px;
-    background:linear-gradient(135deg,rgba(255,70,235,.18),rgba(31,195,255,.05));
+    background:linear-gradient(145deg,rgba(16,198,255,.16),rgba(95,52,255,.05));
     filter:blur(60px);
     z-index:-1;
   }
@@ -54,14 +54,14 @@
     font-size:clamp(2.8rem,7vw,5.4rem);
     letter-spacing:.06em;
     text-transform:uppercase;
-    text-shadow:0 0 35px rgba(124,255,255,.85);
+    text-shadow:0 0 38px rgba(64,215,255,.85);
   }
   p{
     margin:0;
     max-width:28rem;
     line-height:1.6;
     font-size:clamp(1.05rem,2.2vw,1.35rem);
-    color:rgba(228,238,255,.85);
+    color:rgba(198,226,255,.85);
   }
 </style>
 </head>
@@ -69,8 +69,8 @@
 <div id="scene"></div>
 <div id="hud">
   <div>
-    <h1>Hello, cosmos</h1>
-    <p>Ride a shimmering ribbon into a living portal—an iridescent greeting sculpted with THREE.js.</p>
+    <h1>Hello, abyss</h1>
+    <p>Descend through bioluminescent currents—an enigmatic greeting whispered from a submerged portal.</p>
   </div>
 </div>
 <script type="module">
@@ -86,17 +86,50 @@ $$.onReady(() => {
   container.appendChild(renderer.domElement);
 
   const scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x050318, 0.16);
+  scene.fog = new THREE.FogExp2(0x030616, 0.22);
 
   const camera = new THREE.PerspectiveCamera(52, window.innerWidth / window.innerHeight, 0.1, 200);
   camera.position.set(0, 0.6, 5.4);
 
-  const ambient = new THREE.AmbientLight(0x5660aa, 0.65);
-  const keyLight = new THREE.PointLight(0x7e5dff, 2.4, 25, 2);
-  keyLight.position.set(4.4, 5, 3.2);
-  const rimLight = new THREE.PointLight(0x28e4ff, 1.8, 20, 2);
+  const ambient = new THREE.AmbientLight(0x3a5478, 0.8);
+  const keyLight = new THREE.PointLight(0x66b7ff, 2.6, 26, 2);
+  keyLight.position.set(4.2, 4.4, 3.1);
+  const rimLight = new THREE.PointLight(0x2cf3ff, 1.9, 20, 2);
   rimLight.position.set(-3.6, -1.2, -2.4);
   scene.add(ambient, keyLight, rimLight);
+
+  const searchlights = [];
+
+  const beamGeometry = new THREE.CylinderGeometry(0, 1.8, 6.4, 48, 1, true);
+  beamGeometry.translate(0, -3.2, 0);
+  const baseBeamMaterial = new THREE.MeshBasicMaterial({
+    color: 0x55d7ff,
+    transparent: true,
+    opacity: 0.22,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    side: THREE.DoubleSide
+  });
+
+  [
+    { position: new THREE.Vector3(2.8, -1.8, 4.2), phase: 0 },
+    { position: new THREE.Vector3(-2.6, -1.4, 3.8), phase: Math.PI / 2 }
+  ].forEach(({ position, phase }, index) => {
+    const target = new THREE.Vector3(0, -0.8 + index * 0.3, -1.6 - index * 0.8);
+    const spot = new THREE.SpotLight(0x4fd9ff, 3.4, 18, Math.PI / 6, 0.48, 1.3);
+    spot.position.copy(position);
+    spot.target.position.copy(target);
+    scene.add(spot);
+    scene.add(spot.target);
+
+    const beamMaterial = baseBeamMaterial.clone();
+    const beam = new THREE.Mesh(beamGeometry, beamMaterial);
+    beam.position.copy(position);
+    beam.lookAt(target);
+    scene.add(beam);
+
+    searchlights.push({ spot, beam, target, phase });
+  });
 
   const starCount = 1600;
   const starGeometry = new THREE.BufferGeometry();
@@ -111,7 +144,7 @@ $$.onReady(() => {
   }
   starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3));
   const starMaterial = new THREE.PointsMaterial({
-    color: 0x9ef9ff,
+    color: 0x7ecbff,
     size: 0.05,
     sizeAttenuation: true,
     transparent: true,
@@ -126,6 +159,81 @@ $$.onReady(() => {
     new THREE.MeshBasicMaterial({ color: 0x03020a, side: THREE.BackSide, fog: false })
   );
   scene.add(backdrop);
+
+  function createGlowTexture(){
+    const size = 128;
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = size;
+    const ctx = canvas.getContext('2d');
+    const gradient = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+    gradient.addColorStop(0, 'rgba(255,255,255,0.8)');
+    gradient.addColorStop(0.5, 'rgba(120,195,255,0.35)');
+    gradient.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, size, size);
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.wrapS = texture.wrapT = THREE.ClampToEdgeWrapping;
+    return texture;
+  }
+
+  const mistCount = 260;
+  const mistPositions = new Float32Array(mistCount * 3);
+  const mistSpeeds = new Float32Array(mistCount);
+  for (let i = 0; i < mistCount; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const radius = 0.8 + Math.random() * 3.8;
+    mistPositions[i * 3] = Math.cos(angle) * radius;
+    mistPositions[i * 3 + 1] = -1.2 + Math.random() * 2.4;
+    mistPositions[i * 3 + 2] = -8 + Math.random() * 6.5;
+    mistSpeeds[i] = 0.08 + Math.random() * 0.25;
+  }
+
+  const mistGeometry = new THREE.BufferGeometry();
+  mistGeometry.setAttribute('position', new THREE.Float32BufferAttribute(mistPositions, 3));
+  const mistMaterial = new THREE.PointsMaterial({
+    map: createGlowTexture(),
+    color: 0x4fc5ff,
+    size: 6.8,
+    transparent: true,
+    opacity: 0.2,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    sizeAttenuation: false
+  });
+  const mistField = new THREE.Points(mistGeometry, mistMaterial);
+  mistField.position.y = -0.2;
+  scene.add(mistField);
+
+  const neonVectors = new THREE.Group();
+  const vectorMaterial = new THREE.MeshPhysicalMaterial({
+    color: 0x00f4ff,
+    emissive: 0x1f9cff,
+    emissiveIntensity: 1.9,
+    metalness: 0.25,
+    roughness: 0.18,
+    transmission: 0.65,
+    transparent: true,
+    opacity: 0.95,
+    clearcoat: 1,
+    clearcoatRoughness: 0.1
+  });
+
+  for (let i = 0; i < 7; i++) {
+    const angle = (i / 7) * Math.PI * 2;
+    const radius = 1.2 + (i % 2) * 0.5;
+    const height = -0.8 + (i % 3) * 0.4;
+    const offset = (i % 2 === 0 ? 1 : -1) * 0.6;
+    const curve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(Math.cos(angle) * radius, height - 0.4, Math.sin(angle) * radius - 1.6),
+      new THREE.Vector3(offset * 0.3, height + 0.1, -0.6),
+      new THREE.Vector3(-Math.sin(angle) * (radius * 0.6), height + 0.6, 1.8)
+    ]);
+    const tube = new THREE.Mesh(new THREE.TubeGeometry(curve, 160, 0.05, 16, false), vectorMaterial.clone());
+    tube.material.emissiveIntensity = 1.6 + Math.random() * 0.6;
+    neonVectors.add(tube);
+  }
+
+  scene.add(neonVectors);
 
   const portalMaterial = new THREE.ShaderMaterial({
     uniforms: {
@@ -234,6 +342,32 @@ $$.onReady(() => {
 
     ribbon.rotation.y = Math.PI / 3 + Math.sin(t * 0.4) * 0.25;
     ribbon.rotation.x = Math.sin(t * 0.3) * 0.15;
+
+    const mistArray = mistGeometry.attributes.position.array;
+    for (let i = 0; i < mistCount; i++) {
+      const idx = i * 3;
+      mistArray[idx] += Math.sin(t * 0.2 + i) * 0.0006;
+      mistArray[idx + 1] += Math.cos(t * 0.25 + i) * 0.0004;
+      mistArray[idx + 2] += mistSpeeds[i] * 0.035;
+      if (mistArray[idx + 2] > 3) {
+        mistArray[idx + 2] = -8;
+      }
+    }
+    mistGeometry.attributes.position.needsUpdate = true;
+
+    neonVectors.rotation.y = Math.sin(t * 0.25) * 0.4;
+    neonVectors.rotation.x = Math.cos(t * 0.18) * 0.22;
+
+    searchlights.forEach(({ spot, beam, target, phase }, index) => {
+      target.x = Math.sin(t * 0.55 + phase) * 2.1;
+      target.y = -0.9 + Math.cos(t * 0.48 + phase) * 0.6;
+      target.z = -1.4 + Math.cos(t * 0.42 + phase * 0.6) * 2.2;
+      spot.target.position.copy(target);
+      spot.intensity = 3.1 + Math.sin(t * 1.6 + phase) * 0.9;
+      spot.target.updateMatrixWorld();
+      beam.lookAt(target);
+      beam.material.opacity = 0.18 + Math.sin(t * 2.0 + phase) * 0.05;
+    });
 
     starField.rotation.y = t * 0.06;
     starField.rotation.x = Math.sin(t * 0.05) * 0.08;
