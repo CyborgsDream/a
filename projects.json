@@ -28,5 +28,15 @@
     "path": "apps/hills-forest/index.html",
     "shared": "v1",
     "updated": "2025-11-06"
+  },
+  {
+    "slug": "relax",
+    "title": "Relaxation Affirmations",
+    "description": "Multilingual affirmation deck with autoplay TTS and gentle ambience.",
+    "tags": ["wellness","audio","multilingual"],
+    "status": "alpha",
+    "path": "apps/relax/index.html",
+    "shared": "v1",
+    "updated": "2025-11-07"
   }
 ]

@@ -1,0 +1,1048 @@
+<!--
+@project: Relaxation & Meditation Affirmations
+@version: v1.1.0
+@date: 2025-11-07 (Europe/Warsaw)
+@blurb: Multilingual affirmation deck with autoplay, enhanced thunder echo, and customizable ambience.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Relaxation Affirmations — v1.1.0</title>
+<style>
+  :root{
+    --bg:#0e0f12; --fg:#e9eef5; --muted:#9aa3ad; --acc:#66e3c4; --panel:#151821;
+    --good:#55d38a; --warn:#f0c04a; --bad:#ff6b6b; --btn:#232838;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);
+    font:14px/1.5 system-ui,Segoe UI,Roboto,Arial,sans-serif;}
+  header{padding:16px 20px;border-bottom:1px solid #212433;background:#0b0d11;
+    display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+  header h1{font-size:18px;margin:0}
+  header .tag{padding:2px 8px;border-radius:999px;background:#1b2030;color:#cfe6ff}
+  main{display:grid;grid-template-columns:320px 1fr;gap:16px;padding:16px}
+  @media (max-width:1100px){main{grid-template-columns:repeat(auto-fill,minmax(320px,1fr));}}
+  @media (max-width:900px){main{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid #23273a;border-radius:14px;overflow:hidden}
+  .card h2{margin:0;padding:10px 12px;border-bottom:1px solid #22284a;background:#111523;font-size:14px;color:#b9c7d8}
+  .card .body{padding:12px}
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
+  .stack{display:flex;flex-direction:column;align-items:flex-start}
+  .grow{flex:1}
+  label{color:var(--muted);font-size:12px}
+  input[type="range"]{width:140px}
+  select,button,input[type="number"],textarea{
+    background:var(--btn);color:var(--fg);border:1px solid #2b3045;border-radius:10px;
+    padding:8px 10px;font:inherit
+  }
+  button{cursor:pointer}
+  button.primary{background:#1e2636;border-color:#2f3b5a}
+  button.good{background:#123324;border-color:#1c5a3f;color:#b5ffdd}
+  button.warn{background:#3b2e12;border-color:#6c5520;color:#ffe7b5}
+  button.bad{background:#3a1418;border-color:#6b2229;color:#ffc9c9}
+  .kpi{display:flex;gap:12px;flex-wrap:wrap}
+  .pill{background:#1b2030;border:1px solid #2a2f46;border-radius:999px;padding:4px 10px;color:#c7d3e6}
+  .list{max-height:360px;overflow:auto;border-radius:10px;border:1px solid #262b42;padding:8px}
+  .list div{padding:6px 8px;border-radius:8px}
+  .list div.active{background:#1a2335}
+  .small{font-size:12px;color:var(--muted)}
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .log{font-family:ui-monospace,Consolas,monospace;background:#0b0d11;border:1px solid #23273a;border-radius:10px;padding:8px;height:120px;overflow:auto}
+  .translations{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin-top:12px}
+  .translations section{background:#111523;border:1px solid #23273a;border-radius:10px;padding:10px}
+  .translations strong{display:block;color:var(--acc);margin-bottom:4px}
+</style>
+</head>
+<body>
+<header>
+  <h1>🧘‍♀️ <span data-i18n="title">Relaxation & Meditation Affirmations</span> <span class="tag">v1.1.0</span></h1>
+  <span class="tag">256 lines</span>
+  <span class="tag">TTS + Echo</span>
+  <span class="tag">Nature Soundscape</span>
+</header>
+
+<main>
+  <!-- Transport & Mix -->
+  <section class="card">
+    <h2 data-i18n="transportMix">Transport & Mix</h2>
+    <div class="body">
+      <div class="row">
+        <button id="btnPlay" class="good">▶ <span data-i18n="play">Play</span></button>
+        <button id="btnStop" class="bad">■ <span data-i18n="stop">Stop</span></button>
+        <button id="btnPrev" class="primary">⏮ <span data-i18n="prev">Prev</span></button>
+        <button id="btnNext" class="primary">⏭ <span data-i18n="next">Next</span></button>
+        <label class="row"><input type="checkbox" id="chkShuffle"/> <span data-i18n="shuffle">Shuffle</span></label>
+        <label class="row"><input type="checkbox" id="chkLoop" checked/> <span data-i18n="loop">Loop</span></label>
+      </div>
+      <div class="row">
+        <label class="stack"><span data-i18n="interval">Interval (s)</span> <input type="number" id="numInterval" min="0" max="30" step="0.5" value="3"></label>
+        <label class="stack"><span data-i18n="rate">Rate</span> <input type="range" id="rngRate" min="0.6" max="1.2" step="0.02" value="0.92"></label>
+        <label class="stack"><span data-i18n="pitch">Pitch</span> <input type="range" id="rngPitch" min="0.8" max="1.4" step="0.02" value="1.05"></label>
+        <label class="stack"><span data-i18n="voiceVol">Voice Vol</span> <input type="range" id="rngVoiceVol" min="0" max="1" step="0.01" value="0.9"></label>
+      </div>
+      <div class="row">
+        <label class="stack"><span data-i18n="voice">Voice</span>
+          <select id="selVoice" class="grow"></select>
+        </label>
+      </div>
+      <div class="row kpi">
+        <span class="pill"><span data-i18n="indexLabel">Index</span>: <span id="kpiIndex">1</span>/256</span>
+        <span class="pill"><span data-i18n="modeLabel">Mode</span>: <span id="kpiMode">Sequential</span></span>
+        <span class="pill"><span data-i18n="audioLabel">Audio</span>: <span id="kpiAudio">stopped</span></span>
+        <span class="pill"><span data-i18n="languageLabel">Lang</span>: <span id="kpiLanguage">English</span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Language & Autoplay -->
+  <section class="card">
+    <h2 data-i18n="languagePanel">Language & Autoplay</h2>
+    <div class="body">
+      <div class="row">
+        <label class="stack"><span data-i18n="languageSelect">Interface language</span>
+          <select id="selLanguage" class="grow"></select>
+        </label>
+        <label class="row"><input type="checkbox" id="chkAutoplay" checked> <span data-i18n="autoplay">Autoplay affirmations</span></label>
+      </div>
+      <div class="small" data-i18n="autoplayHint">Autoplay starts shortly after loading. Click anywhere if your browser blocks audio.</div>
+    </div>
+  </section>
+
+  <!-- Now Playing -->
+  <section class="card" style="grid-column: span 1 / -1">
+    <h2 data-i18n="nowPlaying">Now Playing</h2>
+    <div class="body">
+      <div id="txtAff" style="font-size:20px;margin-bottom:8px">—</div>
+      <div class="small" data-i18n="customizeHint">Tip: Edit the list below to customize your 256 lines.</div>
+      <div class="translations" id="txtAffTranslations"></div>
+    </div>
+  </section>
+
+  <!-- Echo & Nature -->
+  <section class="card">
+    <h2 data-i18n="echoNature">Echo & Nature</h2>
+    <div class="body">
+      <div class="row">
+        <label class="stack"><span data-i18n="echoRepeats">Echo repeats</span> <input type="range" id="rngEchoRepeats" min="0" max="3" step="1" value="1"></label>
+        <label class="stack"><span data-i18n="echoDelay">Echo delay (ms)</span> <input type="number" id="numEchoDelay" min="50" max="1200" step="10" value="280"></label>
+        <label class="stack"><span data-i18n="echoGain">Echo gain</span> <input type="range" id="rngEchoGain" min="0" max="1" step="0.01" value="0.4"></label>
+      </div>
+      <div class="row">
+        <label class="stack"><span data-i18n="rain">Rain</span> <input type="range" id="rngRain" min="0" max="1" step="0.01" value="0"></label>
+        <label class="stack"><span data-i18n="wind">Wind</span> <input type="range" id="rngWind" min="0" max="1" step="0.01" value="0"></label>
+        <label class="stack"><span data-i18n="water">Water</span> <input type="range" id="rngWater" min="0" max="1" step="0.01" value="0"></label>
+      </div>
+      <div class="row">
+        <label class="row"><input type="checkbox" id="chkAutoThunder" checked> <span data-i18n="autoThunder">Auto Thunder</span></label>
+        <button id="btnThunder" class="warn">⚡ <span data-i18n="thunderNow">Thunder now</span></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Affirmation List & Tests -->
+  <section class="card">
+    <h2 data-i18n="affirmationsTitle">Affirmations (256)</h2>
+    <div class="body">
+      <div class="grid">
+        <div class="list" id="listBox"></div>
+        <div>
+          <label class="stack"><span data-i18n="editSelected">Edit selected:</span></label>
+          <textarea id="txtEdit" rows="6" class="grow" placeholder="Edit…"></textarea>
+          <div class="row">
+            <button id="btnSave" class="primary">💾 <span data-i18n="save">Save</span></button>
+            <button id="btnReset" title="Regenerate 256">♻ <span data-i18n="reset">Reset 256</span></button>
+            <button id="btnExport">⬇ <span data-i18n="export">Export JSON</span></button>
+            <input type="file" id="fileImport" accept="application/json" style="display:none"/>
+            <button id="btnImport">⬆ <span data-i18n="import">Import JSON</span></button>
+          </div>
+          <div class="row">
+            <button id="btnTests" class="primary">🧪 <span data-i18n="runTests">Run Self-Tests</span></button>
+          </div>
+          <div class="log" id="log"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+/* ===========================
+   i18n Packs & Helpers
+=========================== */
+const LANG_PACKS = {
+  en: {
+    locale: 'en',
+    name: 'English',
+    ui: {
+      title: 'Relaxation & Meditation Affirmations',
+      transportMix: 'Transport & Mix',
+      play: 'Play',
+      stop: 'Stop',
+      prev: 'Prev',
+      next: 'Next',
+      shuffle: 'Shuffle',
+      loop: 'Loop',
+      interval: 'Interval (s)',
+      rate: 'Rate',
+      pitch: 'Pitch',
+      voiceVol: 'Voice Vol',
+      voice: 'Voice',
+      indexLabel: 'Index',
+      modeLabel: 'Mode',
+      audioLabel: 'Audio',
+      languageLabel: 'Lang',
+      modeSequential: 'Sequential',
+      modeShuffle: 'Shuffle',
+      audioStatusStopped: 'stopped',
+      audioStatusRunning: 'running',
+      audioStatusPlaying: 'playing',
+      audioStatusComplete: 'complete',
+      languagePanel: 'Language & Autoplay',
+      languageSelect: 'Interface language',
+      autoplay: 'Autoplay affirmations',
+      autoplayHint: 'Autoplay starts shortly after loading. Click anywhere if your browser blocks audio.',
+      nowPlaying: 'Now Playing',
+      customizeHint: 'Tip: Edit the list below to customize your 256 lines.',
+      echoNature: 'Echo & Nature',
+      echoRepeats: 'Echo repeats',
+      echoDelay: 'Echo delay (ms)',
+      echoGain: 'Echo gain',
+      rain: 'Rain',
+      wind: 'Wind',
+      water: 'Water',
+      autoThunder: 'Auto Thunder',
+      thunderNow: 'Thunder now',
+      affirmationsTitle: 'Affirmations (256)',
+      editSelected: 'Edit selected:',
+      save: 'Save',
+      reset: 'Reset 256',
+      export: 'Export JSON',
+      import: 'Import JSON',
+      runTests: 'Run Self-Tests'
+    },
+    stems: [
+      'I am','I allow','I choose','I become','I embody','I welcome','I breathe','I trust',
+      'I release','I soften into','I align with','I return to','I expand in','I nurture','I honor','I rest in'
+    ],
+    qualities: [
+      'calm','clarity','ease','peace','gratitude','self-love','confidence','healing',
+      'presence','patience','kindness','balance','resilience','focus','forgiveness','joy'
+    ],
+    tails: [
+      ' in this moment.',' with each breath.',' as my natural state.',' with gentle awareness.',
+      ' in mind and body.',' here and now.',' with a quiet heart.',' with grace.',
+      ' and let go of tension.',' and I smile within.',' and I feel safe.',' with soft attention.',
+      ' as I slow down.',' as I ground myself.',' and I shine softly.',' and I rest well.'
+    ]
+  },
+  es: {
+    locale: 'es',
+    name: 'Español',
+    ui: {
+      title: 'Afirmaciones de relajación y meditación',
+      transportMix: 'Transporte y mezcla',
+      play: 'Reproducir',
+      stop: 'Detener',
+      prev: 'Anterior',
+      next: 'Siguiente',
+      shuffle: 'Aleatorio',
+      loop: 'Bucle',
+      interval: 'Intervalo (s)',
+      rate: 'Velocidad',
+      pitch: 'Tono',
+      voiceVol: 'Volumen voz',
+      voice: 'Voz',
+      indexLabel: 'Índice',
+      modeLabel: 'Modo',
+      audioLabel: 'Audio',
+      languageLabel: 'Idioma',
+      modeSequential: 'Secuencial',
+      modeShuffle: 'Aleatorio',
+      audioStatusStopped: 'detenido',
+      audioStatusRunning: 'activo',
+      audioStatusPlaying: 'reproduciendo',
+      audioStatusComplete: 'completado',
+      languagePanel: 'Idioma y reproducción automática',
+      languageSelect: 'Idioma de la interfaz',
+      autoplay: 'Reproducción automática de afirmaciones',
+      autoplayHint: 'La reproducción comienza poco después de cargar. Haz clic si tu navegador bloquea el audio.',
+      nowPlaying: 'Reproduciendo ahora',
+      customizeHint: 'Consejo: edita la lista para personalizar tus 256 líneas.',
+      echoNature: 'Eco y naturaleza',
+      echoRepeats: 'Repeticiones de eco',
+      echoDelay: 'Retardo de eco (ms)',
+      echoGain: 'Ganancia de eco',
+      rain: 'Lluvia',
+      wind: 'Viento',
+      water: 'Agua',
+      autoThunder: 'Trueno automático',
+      thunderNow: 'Trueno ahora',
+      affirmationsTitle: 'Afirmaciones (256)',
+      editSelected: 'Editar selección:',
+      save: 'Guardar',
+      reset: 'Restablecer 256',
+      export: 'Exportar JSON',
+      import: 'Importar JSON',
+      runTests: 'Ejecutar auto-pruebas'
+    },
+    stems: [
+      'Yo soy','Permito','Elijo','Me convierto','Incorporo','Recibo','Respiro','Confío',
+      'Libero','Me suavizo en','Me alineo con','Regreso a','Me expando en','Nutro','Honro','Descanso en'
+    ],
+    qualities: [
+      'calma','claridad','ligereza','paz','gratitud','amor propio','confianza','sanación',
+      'presencia','paciencia','bondad','equilibrio','resiliencia','enfoque','perdón','alegría'
+    ],
+    tails: [
+      ' en este momento.',' con cada respiración.',' como mi estado natural.',' con suave conciencia.',
+      ' en mente y cuerpo.',' aquí y ahora.',' con un corazón sereno.',' con gracia.',
+      ' y suelto la tensión.',' y sonrío por dentro.',' y me siento a salvo.',' con atención amable.',
+      ' mientras desacelero.',' al enraizarme.',' y brillo suavemente.',' y descanso bien.'
+    ]
+  },
+  de: {
+    locale: 'de',
+    name: 'Deutsch',
+    ui: {
+      title: 'Entspannungs- und Meditationsaffirmationen',
+      transportMix: 'Steuerung & Mischung',
+      play: 'Start',
+      stop: 'Stopp',
+      prev: 'Zurück',
+      next: 'Weiter',
+      shuffle: 'Zufall',
+      loop: 'Schleife',
+      interval: 'Intervall (s)',
+      rate: 'Geschwindigkeit',
+      pitch: 'Tonhöhe',
+      voiceVol: 'Stimmenlautstärke',
+      voice: 'Stimme',
+      indexLabel: 'Index',
+      modeLabel: 'Modus',
+      audioLabel: 'Audio',
+      languageLabel: 'Sprache',
+      modeSequential: 'Sequentiell',
+      modeShuffle: 'Zufällig',
+      audioStatusStopped: 'gestoppt',
+      audioStatusRunning: 'aktiv',
+      audioStatusPlaying: 'läuft',
+      audioStatusComplete: 'fertig',
+      languagePanel: 'Sprache & Autoplay',
+      languageSelect: 'Interface-Sprache',
+      autoplay: 'Affirmationen automatisch abspielen',
+      autoplayHint: 'Autoplay startet kurz nach dem Laden. Klicke, falls dein Browser Audio blockiert.',
+      nowPlaying: 'Gerade läuft',
+      customizeHint: 'Tipp: Passe deine 256 Zeilen über die Liste an.',
+      echoNature: 'Echo & Natur',
+      echoRepeats: 'Echo-Wiederholungen',
+      echoDelay: 'Echo-Verzögerung (ms)',
+      echoGain: 'Echo-Verstärkung',
+      rain: 'Regen',
+      wind: 'Wind',
+      water: 'Wasser',
+      autoThunder: 'Auto-Gewitter',
+      thunderNow: 'Jetzt Donner',
+      affirmationsTitle: 'Affirmationen (256)',
+      editSelected: 'Auswahl bearbeiten:',
+      save: 'Speichern',
+      reset: '256 zurücksetzen',
+      export: 'JSON exportieren',
+      import: 'JSON importieren',
+      runTests: 'Selbsttests ausführen'
+    },
+    stems: [
+      'Ich bin','Ich erlaube','Ich wähle','Ich werde','Ich verkörpere','Ich heiße willkommen','Ich atme','Ich vertraue',
+      'Ich lasse los','Ich werde weich in','Ich richte mich aus auf','Ich kehre zurück zu','Ich weite mich in','Ich nähre','Ich ehre','Ich ruhe in'
+    ],
+    qualities: [
+      'Ruhe','Klarheit','Leichtigkeit','Frieden','Dankbarkeit','Selbstliebe','Zuversicht','Heilung',
+      'Präsenz','Geduld','Freundlichkeit','Balance','Resilienz','Fokus','Vergebung','Freude'
+    ],
+    tails: [
+      ' in diesem Moment.',' mit jedem Atemzug.',' als meinen natürlichen Zustand.',' mit sanfter Achtsamkeit.',
+      ' in Geist und Körper.',' hier und jetzt.',' mit ruhigem Herzen.',' mit Anmut.',
+      ' und lasse Spannung gehen.',' und lächle innerlich.',' und fühle mich sicher.',' mit weicher Aufmerksamkeit.',
+      ' wenn ich langsamer werde.',' wenn ich mich erde.',' und strahle leise.',' und ruhe tief.'
+    ]
+  },
+  pl: {
+    locale: 'pl',
+    name: 'Polski',
+    ui: {
+      title: 'Afirmacje relaksu i medytacji',
+      transportMix: 'Transport i miks',
+      play: 'Start',
+      stop: 'Stop',
+      prev: 'Wstecz',
+      next: 'Dalej',
+      shuffle: 'Losowo',
+      loop: 'Pętla',
+      interval: 'Interwał (s)',
+      rate: 'Tempo',
+      pitch: 'Ton',
+      voiceVol: 'Głośność głosu',
+      voice: 'Głos',
+      indexLabel: 'Indeks',
+      modeLabel: 'Tryb',
+      audioLabel: 'Audio',
+      languageLabel: 'Język',
+      modeSequential: 'Sekwencyjny',
+      modeShuffle: 'Losowy',
+      audioStatusStopped: 'zatrzymane',
+      audioStatusRunning: 'aktywne',
+      audioStatusPlaying: 'odtwarzanie',
+      audioStatusComplete: 'zakończone',
+      languagePanel: 'Język i autoplay',
+      languageSelect: 'Język interfejsu',
+      autoplay: 'Auto-odtwarzanie afirmacji',
+      autoplayHint: 'Odtwarzanie rozpocznie się wkrótce po załadowaniu. Kliknij, jeśli przeglądarka blokuje dźwięk.',
+      nowPlaying: 'Teraz odtwarzane',
+      customizeHint: 'Wskazówka: edytuj listę, aby dostosować swoje 256 zdań.',
+      echoNature: 'Echo i natura',
+      echoRepeats: 'Powtórzenia echa',
+      echoDelay: 'Opóźnienie echa (ms)',
+      echoGain: 'Wzmocnienie echa',
+      rain: 'Deszcz',
+      wind: 'Wiatr',
+      water: 'Woda',
+      autoThunder: 'Automatyczny grzmot',
+      thunderNow: 'Grzmot teraz',
+      affirmationsTitle: 'Afirmacje (256)',
+      editSelected: 'Edytuj zaznaczenie:',
+      save: 'Zapisz',
+      reset: 'Resetuj 256',
+      export: 'Eksportuj JSON',
+      import: 'Importuj JSON',
+      runTests: 'Uruchom autotesty'
+    },
+    stems: [
+      'Jestem','Pozwalam','Wybieram','Staję się','Ucieleśniam','Witam','Oddycham','Ufam',
+      'Uwalniam','Mięknę w','Wyrównuję się z','Wracam do','Rozszerzam się w','Karmię','Szanuję','Spoczywam w'
+    ],
+    qualities: [
+      'spokojem','klarownością','lekkością','pokojem','wdzięcznością','miłością własną','pewnością','uzdrawianiem',
+      'obecnością','cierpliwością','życzliwością','równowagą','odpornością','skupieniem','wybaczaniem','radością'
+    ],
+    tails: [
+      ' w tej chwili.',' z każdym oddechem.',' jako mój naturalny stan.',' z łagodną świadomością.',
+      ' w umyśle i ciele.',' tu i teraz.',' z cichym sercem.',' z łaską.',
+      ' i puszczam napięcie.',' i uśmiecham się w środku.',' i czuję się bezpiecznie.',' z miękką uwagą.',
+      ' gdy zwalniam.',' gdy się uziemiam.',' i świecę delikatnie.',' i dobrze odpoczywam.'
+    ]
+  },
+  fr: {
+    locale: 'fr',
+    name: 'Français',
+    ui: {
+      title: 'Affirmations de relaxation et méditation',
+      transportMix: 'Transport & mixage',
+      play: 'Lecture',
+      stop: 'Arrêt',
+      prev: 'Précédent',
+      next: 'Suivant',
+      shuffle: 'Aléatoire',
+      loop: 'Boucle',
+      interval: 'Intervalle (s)',
+      rate: 'Vitesse',
+      pitch: 'Hauteur',
+      voiceVol: 'Volume voix',
+      voice: 'Voix',
+      indexLabel: 'Index',
+      modeLabel: 'Mode',
+      audioLabel: 'Audio',
+      languageLabel: 'Langue',
+      modeSequential: 'Séquentiel',
+      modeShuffle: 'Aléatoire',
+      audioStatusStopped: 'arrêté',
+      audioStatusRunning: 'actif',
+      audioStatusPlaying: 'lecture',
+      audioStatusComplete: 'terminé',
+      languagePanel: 'Langue & lecture auto',
+      languageSelect: 'Langue de l’interface',
+      autoplay: 'Lecture auto des affirmations',
+      autoplayHint: 'La lecture démarre peu après le chargement. Cliquez si votre navigateur bloque l’audio.',
+      nowPlaying: 'En cours',
+      customizeHint: 'Astuce : modifiez la liste ci-dessous pour personnaliser vos 256 phrases.',
+      echoNature: 'Écho & nature',
+      echoRepeats: 'Répétitions de l’écho',
+      echoDelay: 'Délai de l’écho (ms)',
+      echoGain: 'Gain de l’écho',
+      rain: 'Pluie',
+      wind: 'Vent',
+      water: 'Eau',
+      autoThunder: 'Tonnerre auto',
+      thunderNow: 'Tonnerre maintenant',
+      affirmationsTitle: 'Affirmations (256)',
+      editSelected: 'Éditer la sélection :',
+      save: 'Enregistrer',
+      reset: 'Réinitialiser 256',
+      export: 'Exporter JSON',
+      import: 'Importer JSON',
+      runTests: 'Lancer auto-tests'
+    },
+    stems: [
+      'Je suis','Je permets','Je choisis','Je deviens','J’incarne','J’accueille','Je respire','Je fais confiance',
+      'Je libère','Je me détends dans','Je m’aligne avec','Je reviens à','Je m’ouvre à','Je nourris','J’honore','Je me repose dans'
+    ],
+    qualities: [
+      'le calme','la clarté','la légèreté','la paix','la gratitude','l’amour de soi','la confiance','la guérison',
+      'la présence','la patience','la gentillesse','l’équilibre','la résilience','la concentration','le pardon','la joie'
+    ],
+    tails: [
+      ' en cet instant.',' à chaque souffle.',' comme mon état naturel.',' avec une douce attention.',
+      ' dans mon corps et mon esprit.',' ici et maintenant.',' avec un cœur tranquille.',' avec grâce.',
+      ' et je relâche la tension.',' et je souris intérieurement.',' et je me sens en sécurité.',' avec une attention douce.',
+      ' en ralentissant.',' en m’ancrant.',' et je rayonne doucement.',' et je repose profondément.'
+    ]
+  }
+};
+const FALLBACK_LANG = 'en';
+const LANG_KEYS = Object.keys(LANG_PACKS);
+
+const docRoot = document.documentElement;
+function getUI(key, langParam = currentLang){
+  const pack = LANG_PACKS[langParam] || LANG_PACKS[FALLBACK_LANG];
+  if(pack.ui && Object.prototype.hasOwnProperty.call(pack.ui, key)) return pack.ui[key];
+  if(langParam!==FALLBACK_LANG){
+    const fall = LANG_PACKS[FALLBACK_LANG];
+    if(fall.ui && Object.prototype.hasOwnProperty.call(fall.ui, key)) return fall.ui[key];
+  }
+  return key;
+}
+function translateUI(lang){
+  const pack = LANG_PACKS[lang] || LANG_PACKS[FALLBACK_LANG];
+  docRoot.lang = pack.locale;
+  document.title = `Relaxation Affirmations — ${pack.name}`;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key = el.getAttribute('data-i18n');
+    const value = getUI(key, lang);
+    if(typeof value === 'string') el.textContent = value;
+  });
+}
+
+/* ===========================
+   Logging & Utilities
+=========================== */
+const logEl = document.getElementById('log');
+function log(msg,color){ const d=document.createElement('div'); d.textContent=msg;
+  if(color) d.style.color=color; logEl.prepend(d); }
+function clamp(x,a,b){ return Math.min(b,Math.max(a,x)); }
+
+/* ===========================
+   Affirmations (256)
+=========================== */
+const cachedDefaults = new Map();
+const customSets = new Map();
+let currentLang = FALLBACK_LANG;
+let AFF = [];
+function generateAffirmations(lang){
+  const pack = LANG_PACKS[lang] || LANG_PACKS[FALLBACK_LANG];
+  const stems = pack.stems;
+  const qualities = pack.qualities;
+  const tails = pack.tails;
+  const out=[];
+  for(let i=0;i<stems.length;i++){
+    for(let j=0;j<qualities.length;j++){
+      const k=(i+j)%tails.length;
+      out.push(`${stems[i]} ${qualities[j]}${tails[k]}`);
+    }
+  }
+  return out;
+}
+function getDefaultAffirmations(lang){
+  if(!cachedDefaults.has(lang)){
+    cachedDefaults.set(lang, generateAffirmations(lang));
+  }
+  return cachedDefaults.get(lang);
+}
+function loadLanguage(lang){
+  if(!LANG_PACKS[lang]) lang = FALLBACK_LANG;
+  currentLang = lang;
+  translateUI(lang);
+  selLanguage.value = lang;
+  const aff = customSets.get(lang);
+  AFF = (aff ? aff.slice() : getDefaultAffirmations(lang).slice());
+  resetOrder();
+  currentIndex = 0; selectionIndex = 0;
+  renderList(); updateNowPlaying();
+  const name = LANG_PACKS[lang].name;
+  kpiLanguage.textContent = name;
+  setAudioStatus('audioStatusStopped');
+  setModeKPI();
+  renderTranslations(currentIndex);
+}
+function persistCustom(){
+  customSets.set(currentLang, AFF.slice());
+}
+
+/* ===========================
+   UI Elements
+=========================== */
+const listBox = document.getElementById('listBox');
+const txtAff = document.getElementById('txtAff');
+const txtEdit = document.getElementById('txtEdit');
+const btnSave = document.getElementById('btnSave');
+const btnReset = document.getElementById('btnReset');
+const btnExport = document.getElementById('btnExport');
+const btnImport = document.getElementById('btnImport');
+const fileImport = document.getElementById('fileImport');
+
+const btnPlay = document.getElementById('btnPlay');
+const btnStop = document.getElementById('btnStop');
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+
+const chkShuffle = document.getElementById('chkShuffle');
+const chkLoop = document.getElementById('chkLoop');
+const numInterval = document.getElementById('numInterval');
+
+const rngRate = document.getElementById('rngRate');
+const rngPitch = document.getElementById('rngPitch');
+const rngVoiceVol = document.getElementById('rngVoiceVol');
+const selVoice = document.getElementById('selVoice');
+const selLanguage = document.getElementById('selLanguage');
+const chkAutoplay = document.getElementById('chkAutoplay');
+
+const rngEchoRepeats = document.getElementById('rngEchoRepeats');
+const numEchoDelay = document.getElementById('numEchoDelay');
+const rngEchoGain = document.getElementById('rngEchoGain');
+
+const rngRain = document.getElementById('rngRain');
+const rngWind = document.getElementById('rngWind');
+const rngWater = document.getElementById('rngWater');
+const chkAutoThunder = document.getElementById('chkAutoThunder');
+const btnThunder = document.getElementById('btnThunder');
+
+const kpiIndex = document.getElementById('kpiIndex');
+const kpiMode  = document.getElementById('kpiMode');
+const kpiAudio = document.getElementById('kpiAudio');
+const kpiLanguage = document.getElementById('kpiLanguage');
+const translationPanel = document.getElementById('txtAffTranslations');
+
+/* ===========================
+   Language Select Setup
+=========================== */
+function populateLanguages(){
+  selLanguage.innerHTML='';
+  LANG_KEYS.forEach(key=>{
+    const opt=document.createElement('option');
+    opt.value=key; opt.textContent = LANG_PACKS[key].name;
+    selLanguage.appendChild(opt);
+  });
+  selLanguage.value=currentLang;
+}
+selLanguage.onchange=()=>{
+  persistCustom();
+  stopFlag = true; window.speechSynthesis.cancel(); playing=false;
+  loadLanguage(selLanguage.value);
+  syncPlayCursor();
+  tryAutoPlay();
+};
+
+/* ===========================
+   List Rendering & Editing
+=========================== */
+let currentIndex = 0;
+let selectionIndex = 0;
+function renderList(){
+  listBox.innerHTML='';
+  AFF.forEach((t,i)=>{
+    const div=document.createElement('div');
+    div.textContent=`${i+1}. ${t}`;
+    if(i===selectionIndex) div.classList.add('active');
+    div.onclick=()=>{
+      selectionIndex=i;
+      currentIndex=i;
+      renderList();
+      txtEdit.value=AFF[i];
+      updateNowPlaying(i);
+      syncPlayCursor();
+    };
+    listBox.appendChild(div);
+  });
+  txtEdit.value = AFF[selectionIndex] || '';
+}
+function updateNowPlaying(idx=currentIndex){
+  txtAff.textContent = AFF[idx] || '—';
+  kpiIndex.textContent = (idx+1);
+  renderTranslations(idx);
+}
+btnSave.onclick=()=>{ AFF[selectionIndex]=txtEdit.value.trim()||AFF[selectionIndex]; renderList(); updateNowPlaying(selectionIndex); persistCustom(); };
+btnReset.onclick=()=>{
+  cachedDefaults.set(currentLang, generateAffirmations(currentLang));
+  customSets.delete(currentLang);
+  AFF = getDefaultAffirmations(currentLang).slice();
+  selectionIndex=0; currentIndex=0;
+  renderList(); updateNowPlaying(0);
+  resetOrder();
+  syncPlayCursor();
+  setAudioStatus('audioStatusStopped');
+  log('Regenerated default affirmations for current language.','#66e3c4');
+};
+btnExport.onclick=()=>{
+  const payload = { language: currentLang, affirmations: AFF };
+  const blob = new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`affirmations-${currentLang}-256.json`; a.click();
+};
+btnImport.onclick=()=>fileImport.click();
+fileImport.onchange=(e)=>{
+  const f=e.target.files[0]; if(!f) return;
+  const fr=new FileReader(); fr.onload=()=>{ try{
+      const data=JSON.parse(fr.result);
+      const arr = Array.isArray(data)? data : data.affirmations;
+      const lang = data.language && LANG_PACKS[data.language]? data.language : currentLang;
+      if(Array.isArray(arr) && arr.length===256){
+        if(lang!==currentLang){ selLanguage.value=lang; loadLanguage(lang); }
+        AFF=arr.map(x=>String(x));
+        persistCustom();
+        selectionIndex=0; currentIndex=0; renderList(); updateNowPlaying(0);
+        resetOrder();
+        syncPlayCursor();
+        setAudioStatus('audioStatusStopped');
+        log(`Imported 256 affirmations for ${LANG_PACKS[currentLang].name}.`,'lightgreen');
+      }else{ log('Import failed: JSON must contain 256 affirmations.','#ffb86c'); }
+  }catch(err){ log('Import parse error: '+err.message,'#ff6b6b'); } };
+  fr.readAsText(f);
+};
+
+/* ===========================
+   TTS Engine (SpeechSynthesis)
+=========================== */
+const synth = window.speechSynthesis;
+let VOICES = [];
+function pickFemaleLikeVoice(voices){
+  const prefer = [/female/i, /woman/i, /samantha/i, /zira/i, /natasha/i, /susan/i, /victoria/i,
+                  /google .* (en|de|nl|pl|es|fr)/i, /microsoft .* (en|de|nl|pl|es|fr)/i];
+  const good = voices.filter(v=>prefer.some(rx=>rx.test(v.name)));
+  if(good.length) return good[0];
+  const langOrder = ['en','es','de','fr','pl'];
+  for(const L of langOrder){
+    const c = voices.filter(v=>v.lang && v.lang.toLowerCase().startsWith(L));
+    if(c.length) return c[0];
+  }
+  return voices[0] || null;
+}
+function populateVoices(){
+  VOICES = synth.getVoices();
+  selVoice.innerHTML='';
+  VOICES.forEach((v,i)=>{
+    const opt=document.createElement('option');
+    opt.value=String(i);
+    opt.textContent = `${v.name} — ${v.lang}${v.default?' (default)':''}`;
+    selVoice.appendChild(opt);
+  });
+  const pre = pickFemaleLikeVoice(VOICES);
+  const idx = VOICES.indexOf(pre);
+  if(idx>=0) selVoice.value=String(idx);
+  log(`Voices loaded: ${VOICES.length}`, VOICES.length? 'lightgreen':'#ffb86c');
+  tryAutoPlay();
+}
+if (typeof speechSynthesis !== 'undefined'){
+  populateVoices();
+  window.speechSynthesis.onvoiceschanged = populateVoices;
+}else{
+  log('TTS not supported in this browser.','#ff6b6b');
+}
+
+function speakOnce(text, vol, rate, pitch, voice){
+  return new Promise(resolve=>{
+    const u=new SpeechSynthesisUtterance(text);
+    u.volume=clamp(vol,0,1);
+    u.rate=clamp(rate,0.1,10);
+    u.pitch=clamp(pitch,0,2);
+    if(voice) u.voice=voice;
+    u.onend=()=>resolve();
+    u.onerror=()=>resolve();
+    synth.speak(u);
+  });
+}
+async function speakWithEcho(text){
+  const v = VOICES[Number(selVoice.value)] || pickFemaleLikeVoice(VOICES);
+  const rate  = Number(rngRate.value);
+  const pitch = Number(rngPitch.value);
+  const baseVol = Number(rngVoiceVol.value);
+  const repeats = Number(rngEchoRepeats.value);
+  const delayMs = Number(numEchoDelay.value);
+  const echoGain = Number(rngEchoGain.value);
+
+  await speakOnce(text, baseVol, rate, pitch, v);
+
+  for(let i=0;i<repeats;i++){
+    await new Promise(res=>setTimeout(res, delayMs));
+    await speakOnce(text, clamp(baseVol * Math.pow(echoGain, i+1), 0, 1), rate*0.98, clamp(pitch*1.01,0,2), v);
+  }
+}
+
+/* ===========================
+   Nature Soundscape (Web Audio)
+=========================== */
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let actx, masterGain, rainGain, windGain, waterGain;
+
+function makeNoiseBuffer(len=2){
+  const sr=actx.sampleRate, N=len*sr, buf=actx.createBuffer(1,N,sr), d=buf.getChannelData(0);
+  for(let i=0;i<N;i++) d[i]=Math.random()*2-1;
+  return buf;
+}
+function nodeNoiseChain(type, gainLevel){
+  const src=actx.createBufferSource(); src.buffer=makeNoiseBuffer(4); src.loop=true;
+  const g = actx.createGain(); g.gain.value = gainLevel;
+  const f = actx.createBiquadFilter();
+  if(type==='rain'){ f.type='bandpass'; f.frequency.value=1200; f.Q.value=0.8; }
+  if(type==='wind'){ f.type='lowpass';  f.frequency.value=800;  f.Q.value=0.1; }
+  if(type==='water'){ f.type='bandpass'; f.frequency.value=750;  f.Q.value=4.0; }
+  src.connect(f).connect(g).connect(masterGain);
+  src.start();
+  return {src, g, f};
+}
+function initAudio(){
+  if(actx) return;
+  actx = new AudioCtx();
+  masterGain = actx.createGain(); masterGain.gain.value=0.45; masterGain.connect(actx.destination);
+
+  const rain = nodeNoiseChain('rain', Number(rngRain.value));
+  rainGain = rain.g;
+
+  const wind = nodeNoiseChain('wind', Number(rngWind.value));
+  windGain = wind.g;
+  const lfo = actx.createOscillator(); lfo.frequency.value = 0.08;
+  const lfoGain = actx.createGain(); lfoGain.gain.value = 0.25;
+  lfo.connect(lfoGain).connect(windGain.gain); lfo.start();
+
+  const water = nodeNoiseChain('water', Number(rngWater.value));
+  waterGain = water.g;
+  const lfo2 = actx.createOscillator(); lfo2.frequency.value = 0.2;
+  const lfo2Gain = actx.createGain(); lfo2Gain.gain.value = 0.18;
+  lfo2.connect(lfo2Gain).connect(waterGain.gain); lfo2.start();
+
+  scheduleAutoThunder();
+  setAudioStatus('audioStatusRunning');
+  log('Audio engine initialized.','lightgreen');
+}
+function resumeIfSuspended(){
+  if(actx && actx.state==='suspended'){
+    actx.resume().catch(()=>{});
+  }
+}
+function setNatureLevels(){
+  if(!actx) return;
+  rainGain.gain.value  = Number(rngRain.value);
+  windGain.gain.value  = Number(rngWind.value);
+  waterGain.gain.value = Number(rngWater.value);
+}
+
+function thunderBurst({delay=0, peak=0.9, cutoff=600, rumble=0.2, tail=2.4}){
+  const start = actx.currentTime + delay;
+  const src = actx.createBufferSource(); src.buffer = makeNoiseBuffer(3);
+  const f = actx.createBiquadFilter(); f.type='lowpass'; f.frequency.value=1000;
+  const g = actx.createGain(); g.gain.value=0.0;
+  src.connect(f).connect(g).connect(masterGain);
+  src.start(start);
+
+  g.gain.setValueAtTime(0.0,start);
+  g.gain.linearRampToValueAtTime(peak,start+0.05);
+  g.gain.exponentialRampToValueAtTime(0.001,start+tail);
+
+  f.frequency.setValueAtTime(cutoff*1.8,start);
+  f.frequency.exponentialRampToValueAtTime(Math.max(120,cutoff*0.4), start+tail);
+
+  const o1=actx.createOscillator(); o1.type='sine'; o1.frequency.value=48;
+  const o2=actx.createOscillator(); o2.type='sine'; o2.frequency.value=62;
+  const og=actx.createGain(); og.gain.value=0.0;
+  o1.connect(og); o2.connect(og); og.connect(masterGain);
+  o1.start(start); o2.start(start);
+  og.gain.setValueAtTime(0.0,start);
+  og.gain.linearRampToValueAtTime(rumble,start+0.12);
+  og.gain.exponentialRampToValueAtTime(0.001,start+tail+0.4);
+  o1.stop(start+tail+0.6); o2.stop(start+tail+0.6);
+}
+async function thunderOnce(){
+  if(!actx) return;
+  thunderBurst({delay:0, peak:0.85, cutoff:720, rumble:0.22, tail:2.8});
+  thunderBurst({delay:0.7, peak:0.38, cutoff:520, rumble:0.12, tail:2.2});
+  thunderBurst({delay:1.4, peak:0.22, cutoff:420, rumble:0.08, tail:2.0});
+  log('⚡ Thunder with echoes', '#ffe7b5');
+}
+function scheduleAutoThunder(){
+  if(!actx) return;
+  (function loop(){
+    if(!chkAutoThunder.checked){ setTimeout(loop, 1500); return; }
+    const wait = 5000 + Math.random()*15000;
+    setTimeout(async ()=>{
+      if(chkAutoThunder.checked && Math.random()<0.25) await thunderOnce();
+      loop();
+    }, wait);
+  })();
+}
+btnThunder.onclick = thunderOnce;
+[rngRain,rngWind,rngWater].forEach(el=>el.addEventListener('input', setNatureLevels));
+document.addEventListener('pointerdown', resumeIfSuspended, {passive:true});
+document.addEventListener('keydown', resumeIfSuspended);
+
+/* ===========================
+   Player Controller
+=========================== */
+let playing=false, stopFlag=false;
+let order = [];
+let playCursor = 0;
+function setAudioStatus(key){
+  kpiAudio.textContent = getUI(key);
+}
+function resetOrder(){
+  order = Array.from({length:AFF.length},(_,i)=>i);
+  if(chkShuffle.checked) reshuffle();
+  else syncPlayCursor();
+}
+function reshuffle(){
+  for(let i=order.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [order[i],order[j]]=[order[j],order[i]];
+  }
+  syncPlayCursor();
+}
+function syncPlayCursor(){
+  if(!order.length) order = Array.from({length:AFF.length},(_,i)=>i);
+  if(chkShuffle.checked){
+    const pos = order.indexOf(currentIndex);
+    playCursor = pos>=0 ? pos : 0;
+  }else{
+    playCursor = clamp(currentIndex,0,Math.max(0,AFF.length-1));
+  }
+}
+function setModeKPI(){
+  kpiMode.textContent = chkShuffle.checked ? getUI('modeShuffle') : getUI('modeSequential');
+}
+chkShuffle.onchange=()=>{ if(chkShuffle.checked) reshuffle(); else syncPlayCursor(); setModeKPI(); };
+
+async function playLoop(){
+  if(!AFF.length) return;
+  playing=true; stopFlag=false;
+  if(!actx) initAudio(); else resumeIfSuspended();
+  setModeKPI();
+  syncPlayCursor();
+  setAudioStatus('audioStatusPlaying');
+  let cursor = playCursor;
+  while(!stopFlag){
+    const idx = chkShuffle.checked ? order[cursor] : cursor;
+    currentIndex = idx;
+    selectionIndex = idx;
+    renderList(); updateNowPlaying(idx);
+    await speakWithEcho(AFF[idx]);
+    cursor++;
+    if(cursor>=AFF.length){
+      if(chkLoop.checked){
+        cursor = 0;
+        if(chkShuffle.checked){
+          reshuffle();
+        }
+      }else{
+        break;
+      }
+    }
+    const ms = Math.max(0, Number(numInterval.value)*1000);
+    if(ms>0){
+      let t0=Date.now();
+      while(Date.now()-t0<ms){ if(stopFlag) break; await new Promise(r=>setTimeout(r,50)); }
+    }
+  }
+  playCursor = cursor % Math.max(1, AFF.length);
+  playing=false;
+  if(stopFlag) setAudioStatus('audioStatusStopped');
+  else setAudioStatus('audioStatusComplete');
+}
+btnPlay.onclick=()=>{ if(!playing){ playLoop(); } };
+btnStop.onclick=()=>{ stopFlag=true; window.speechSynthesis.cancel(); playing=false; setAudioStatus('audioStatusStopped'); };
+btnPrev.onclick=()=>{
+  if(!AFF.length) return;
+  stopFlag=true; speechSynthesis.cancel(); playing=false; setAudioStatus('audioStatusStopped');
+  if(chkShuffle.checked){
+    syncPlayCursor();
+    playCursor = (playCursor-1+AFF.length)%AFF.length;
+    currentIndex = order[playCursor];
+  }else{
+    currentIndex = (currentIndex-1+AFF.length)%AFF.length;
+    playCursor = currentIndex;
+  }
+  selectionIndex = currentIndex;
+  renderList(); updateNowPlaying(currentIndex);
+};
+btnNext.onclick=()=>{
+  if(!AFF.length) return;
+  stopFlag=true; speechSynthesis.cancel(); playing=false; setAudioStatus('audioStatusStopped');
+  if(chkShuffle.checked){
+    syncPlayCursor();
+    playCursor = (playCursor+1)%AFF.length;
+    currentIndex = order[playCursor];
+  }else{
+    currentIndex = (currentIndex+1)%AFF.length;
+    playCursor = currentIndex;
+  }
+  selectionIndex = currentIndex;
+  renderList(); updateNowPlaying(currentIndex);
+};
+
+/* ===========================
+   Translations Panel
+=========================== */
+function renderTranslations(idx){
+  translationPanel.innerHTML='';
+  LANG_KEYS.filter(code=>code!==currentLang).forEach(code=>{
+    const base = customSets.get(code) || getDefaultAffirmations(code);
+    const line = base[idx] || '';
+    const section = document.createElement('section');
+    section.innerHTML = `<strong>${LANG_PACKS[code].name}</strong><div>${line}</div>`;
+    translationPanel.appendChild(section);
+  });
+}
+
+/* ===========================
+   Autoplay Scheduler
+=========================== */
+let autoplayTimer;
+function tryAutoPlay(){
+  if(playing || !chkAutoplay.checked) return;
+  stopFlag = false;
+  clearTimeout(autoplayTimer);
+  autoplayTimer = setTimeout(()=>{
+    if(!playing && chkAutoplay.checked){ playLoop(); }
+  }, 1200);
+}
+chkAutoplay.onchange=()=>{
+  if(chkAutoplay.checked) tryAutoPlay();
+  else { stopFlag=true; window.speechSynthesis.cancel(); playing=false; setAudioStatus('audioStatusStopped'); }
+};
+
+/* ===========================
+   Self-Tests
+=========================== */
+document.getElementById('btnTests').onclick=()=>{
+  let ok=true;
+  if(AFF.length!==256){ log(`Test FAIL: Affirmations length=${AFF.length} (expected 256)`, '#ff6b6b'); ok=false; }
+  else log('Test OK: 256 affirmations present.','lightgreen');
+
+  if(!('speechSynthesis' in window)){ log('Test FAIL: TTS unsupported.','#ff6b6b'); ok=false; }
+  else if(VOICES.length===0){ log('Test WARN: No voices loaded yet.','#f0c04a'); }
+  else log(`Test OK: Voices detected (${VOICES.length}).`,'lightgreen');
+
+  if(!actx) log('Test WARN: AudioContext not initialized. Press Play to start audio.','#f0c04a');
+  else log('Test OK: AudioContext active.','lightgreen');
+
+  if(actx){ thunderOnce(); log('Thunder smoke test triggered.','lightgreen'); }
+  if(ok) log('All critical tests passed. Ready to relax.','lightgreen');
+};
+
+/* ===========================
+   Bootstrap
+=========================== */
+function init(){
+  populateLanguages();
+  loadLanguage(currentLang);
+  tryAutoPlay();
+}
+init();
+
+</script>
+</body>
+</html>
