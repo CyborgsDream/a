@@ -1,8 +1,8 @@
 {
   "title": "Hello App",
-  "description": "Tiny sample mini-app to prove the hub works.",
-  "tags": ["sample", "starter"],
+  "description": "A neon cosmic greeting rendered in spectacular realtime 3D with THREE.js.",
+  "tags": ["sample", "starter", "threejs"],
   "status": "alpha",
   "shared": "v1",
-  "updated": "2025-11-04"
+  "updated": "2025-11-07"
 }
