@@ -1,7 +1,7 @@
 <!--
 @project: a/hello — sample mini-app
-@version: v1.2.0
-@date: 2025-11-07 (Europe/Warsaw)
+@version: v1.3.0
+@date: 2025-11-09 (Europe/Warsaw)
 @blurb: Descend into an abyssal greeting awash in bioluminescent light and drifting mist.
 -->
 <!doctype html>
@@ -31,49 +31,18 @@
   }
   #scene canvas{display:block;width:100%;height:100%;}
   #hud{
-    position:relative;
-    z-index:1;
-    display:grid;
-    place-items:center;
-    text-align:center;
-    padding:4rem clamp(2rem,4vw,5rem);
-    height:100dvh;
-    pointer-events:none;
-  }
-  #hud::before{
-    content:"";
     position:absolute;
-    inset:18% 22%;
-    border-radius:38px;
-    background:linear-gradient(140deg,rgba(20,130,200,.18),rgba(0,220,200,.06));
-    box-shadow:0 0 120px rgba(0,180,255,.2);
-    filter:blur(70px);
-    z-index:-1;
+    width:1px;
+    height:1px;
+    margin:-1px;
+    padding:0;
+    border:0;
+    clip:rect(0 0 0 0);
+    clip-path:inset(50%);
+    overflow:hidden;
+    white-space:nowrap;
   }
-  h1{
-    margin:0 0 .5rem;
-    font-size:clamp(2.8rem,7vw,5.4rem);
-    letter-spacing:.08em;
-    text-transform:uppercase;
-    text-shadow:0 0 45px rgba(40,220,255,.88);
-    position:relative;
-    display:inline-block;
-    --lens-x:50%;
-    --lens-y:50%;
-    --lens-strength:0;
-  }
-  h1::after{
-    content:"";
-    position:absolute;
-    inset:-18%;
-    border-radius:50%;
-    background:radial-gradient(circle at var(--lens-x) var(--lens-y),rgba(80,190,255,.75),rgba(0,255,205,.4) 30%,rgba(0,80,140,.08) 60%,rgba(0,0,0,0) 80%);
-    filter:blur(10px) saturate(1.4);
-    mix-blend-mode:screen;
-    opacity:calc(var(--lens-strength) * .85);
-    transition:opacity .22s ease;
-    pointer-events:none;
-  }
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);border:0;white-space:nowrap;}
   p{
     margin:0;
     max-width:28rem;
@@ -81,15 +50,139 @@
     font-size:clamp(1.05rem,2.2vw,1.35rem);
     color:rgba(190,232,255,.82);
   }
+  #ui-overlay{
+    position:fixed;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    gap:1.5rem;
+    padding:1.25rem clamp(1rem,2.4vw,2.5rem);
+    pointer-events:none;
+    z-index:2;
+    color:#e9fbff;
+    font-size:.85rem;
+    letter-spacing:.04em;
+  }
+  #ui-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:1rem;
+    flex-wrap:wrap;
+  }
+  .badge{
+    pointer-events:auto;
+    background:linear-gradient(135deg,rgba(16,128,255,.4),rgba(32,255,220,.25));
+    border:1px solid rgba(80,200,255,.5);
+    padding:.35rem .8rem;
+    border-radius:999px;
+    font-weight:600;
+    text-transform:uppercase;
+    box-shadow:0 0 18px rgba(0,200,255,.4);
+    backdrop-filter:blur(12px);
+    white-space:nowrap;
+  }
+  .badge span{display:inline-block;min-width:4.6rem;text-align:center;}
+  #control-panel{
+    pointer-events:auto;
+    display:grid;
+    justify-items:end;
+    gap:.55rem;
+    padding:.8rem 1rem;
+    border-radius:18px;
+    background:linear-gradient(160deg,rgba(4,28,48,.72),rgba(0,12,24,.82));
+    border:1px solid rgba(32,180,255,.32);
+    box-shadow:0 0 32px rgba(0,128,255,.25);
+    min-width:200px;
+    width:min(320px,100%);
+  }
+  #control-panel label{
+    display:flex;
+    align-items:center;
+    gap:.6rem;
+    font-size:.82rem;
+    text-transform:uppercase;
+  }
+  #control-panel select,
+  #control-panel button{
+    font:inherit;
+    color:inherit;
+    background:rgba(0,30,60,.65);
+    border:1px solid rgba(40,210,255,.45);
+    border-radius:12px;
+    padding:.4rem .7rem;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    cursor:pointer;
+    transition:background .2s ease,transform .2s ease;
+  }
+  #control-panel select:focus,
+  #control-panel button:focus{
+    outline:2px solid rgba(72,240,255,.75);
+    outline-offset:2px;
+  }
+  #control-panel button:hover,
+  #control-panel select:hover{
+    background:rgba(0,48,90,.85);
+    transform:translateY(-1px);
+  }
+  #legend{
+    display:grid;
+    gap:.35rem;
+    font-size:.78rem;
+    text-transform:uppercase;
+  }
+  #legend strong{color:rgba(120,240,255,.95);font-weight:600;}
+  #status-line{
+    font-size:.74rem;
+    color:rgba(180,240,255,.75);
+    text-transform:uppercase;
+  }
+  @media (max-width:768px){
+    #ui-overlay{padding:1rem;gap:1rem;font-size:.78rem;}
+    #control-panel{width:100%;justify-items:stretch;min-width:0;}
+    #control-panel label{justify-content:space-between;}
+    #control-panel select,#control-panel button{width:100%;}
+    #ui-top{flex-direction:column;align-items:flex-start;}
+    .badge span{min-width:0;}
+  }
+  @media (max-width:480px){
+    .badge{font-size:.74rem;padding:.3rem .6rem;}
+    #control-panel{padding:.7rem .85rem;gap:.5rem;}
+  }
 </style>
 </head>
 <body>
 <div id="scene"></div>
-<div id="hud">
-  <div>
-    <h1>Greetings from the abyss</h1>
-    <p>Descend through sonar pulses and veils of vapor, guided by neon beacons that sweep the endless deep.</p>
+<div id="ui-overlay">
+  <div id="ui-top">
+    <div class="badge" aria-live="polite" aria-label="Frames per second"><span id="fps-value">FPS --</span></div>
+    <div id="control-panel" aria-live="polite">
+      <label for="resolution-select">Resolution
+        <select id="resolution-select">
+          <option value="auto">Auto adaptive</option>
+          <option value="1.25">High (1.25×)</option>
+          <option value="1">Standard (1×)</option>
+          <option value="0.75">Performance (0.75×)</option>
+          <option value="0.5">Ultra performance (0.5×)</option>
+        </select>
+      </label>
+      <button type="button" id="fullscreen-toggle">Enter fullscreen</button>
+      <button type="button" id="gyro-calibrate">Calibrate gyroscope</button>
+      <div id="legend">
+        <strong>Navigation</strong>
+        <span>Space — Toggle motion</span>
+        <span>Pointer — Lens focus sweep</span>
+        <span>Auto-orbit camera — Cinematic glide</span>
+      </div>
+      <div id="status-line">Gyroscope idle</div>
+    </div>
   </div>
+</div>
+<div id="hud">
+  <h1 class="sr-only">Greetings from the abyss</h1>
+  <p class="sr-only">Descend through sonar pulses and veils of vapor, guided by neon beacons that sweep the endless deep.</p>
 </div>
 <script type="module">
 import { $$ } from '@shared/utils.js';
@@ -98,9 +191,18 @@ import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.m
 $$.onReady(() => {
   const container = document.getElementById('scene');
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  const resolutionSelect = document.getElementById('resolution-select');
+  const fullscreenToggle = document.getElementById('fullscreen-toggle');
+  const gyroButton = document.getElementById('gyro-calibrate');
+  const statusLine = document.getElementById('status-line');
+  const fpsValue = document.getElementById('fps-value');
+
+  const mobileQuery = window.matchMedia('(max-width: 768px)');
+  const mobileUserAgent = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  let isMobile = mobileUserAgent || mobileQuery.matches;
+
   renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.setSize(window.innerWidth, window.innerHeight);
   container.appendChild(renderer.domElement);
 
   const scene = new THREE.Scene();
@@ -108,8 +210,6 @@ $$.onReady(() => {
 
   const camera = new THREE.PerspectiveCamera(52, window.innerWidth / window.innerHeight, 0.1, 200);
   camera.position.set(0.35, 0.45, 5.6);
-
-  const heading = document.querySelector('#hud h1');
 
   const ambient = new THREE.AmbientLight(0x10263b, 0.9);
   const hemisphere = new THREE.HemisphereLight(0x1a4872, 0x01040a, 0.6);
@@ -156,7 +256,7 @@ $$.onReady(() => {
   });
   scene.add(searchlightGroup);
 
-  const glimmerCount = 1400;
+  const glimmerCount = isMobile ? 780 : 1400;
   const glimmerGeometry = new THREE.BufferGeometry();
   const glimmerPositions = new Float32Array(glimmerCount * 3);
   for (let i = 0; i < glimmerCount; i++) {
@@ -187,11 +287,50 @@ $$.onReady(() => {
   scene.add(backdrop);
 
   const backgroundTarget = new THREE.WebGLRenderTarget(
-    window.innerWidth * renderer.getPixelRatio(),
-    window.innerHeight * renderer.getPixelRatio(),
+    Math.max(1, window.innerWidth),
+    Math.max(1, window.innerHeight),
     { depthBuffer: false }
   );
   backgroundTarget.texture.colorSpace = THREE.SRGBColorSpace;
+
+  const pixelRatioLimits = {
+    auto(){
+      const cap = isMobile ? 1.1 : 1.7;
+      return Math.min(window.devicePixelRatio || 1, cap);
+    },
+    fixed(value){
+      return value;
+    }
+  };
+  const resolvePixelRatio = (value) => value === 'auto' ? pixelRatioLimits.auto() : pixelRatioLimits.fixed(parseFloat(value));
+  let currentPixelRatio = resolvePixelRatio(resolutionSelect.value);
+  function updateRenderSizes(){
+    currentPixelRatio = resolvePixelRatio(resolutionSelect.value);
+    const w = Math.max(1, window.innerWidth);
+    const h = Math.max(1, window.innerHeight);
+    renderer.setPixelRatio(currentPixelRatio);
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    backgroundTarget.setSize(
+      Math.max(1, Math.floor(w * currentPixelRatio)),
+      Math.max(1, Math.floor(h * currentPixelRatio))
+    );
+  }
+  const updateMobileState = (matches) => {
+    isMobile = mobileUserAgent || matches;
+    if (resolutionSelect.value === 'auto') {
+      updateRenderSizes();
+    }
+  };
+  if (typeof mobileQuery.addEventListener === 'function') {
+    mobileQuery.addEventListener('change', (event) => updateMobileState(event.matches));
+  } else if (typeof mobileQuery.addListener === 'function') {
+    mobileQuery.addListener((event) => updateMobileState(event.matches));
+  }
+  resolutionSelect.addEventListener('change', updateRenderSizes);
+  window.addEventListener('resize', updateRenderSizes);
+  updateRenderSizes();
 
   const portalMaterial = new THREE.ShaderMaterial({
     uniforms: {
@@ -228,6 +367,85 @@ $$.onReady(() => {
   const portal = new THREE.Mesh(new THREE.RingGeometry(1.4, 2.4, 128, 48), portalMaterial);
   portal.rotation.x = Math.PI / 2;
   scene.add(portal);
+
+  const headingCanvas = document.createElement('canvas');
+  headingCanvas.width = 2048;
+  headingCanvas.height = 1024;
+  const headingCtx = headingCanvas.getContext('2d');
+  headingCtx.clearRect(0, 0, headingCanvas.width, headingCanvas.height);
+  headingCtx.fillStyle = 'rgba(0,0,0,0)';
+  headingCtx.fillRect(0, 0, headingCanvas.width, headingCanvas.height);
+  headingCtx.textAlign = 'center';
+  headingCtx.textBaseline = 'middle';
+  headingCtx.font = '700 180px "Space Grotesk", "Segoe UI", system-ui, sans-serif';
+  headingCtx.fillStyle = 'rgba(173, 244, 255, 0.9)';
+  headingCtx.fillText('GREETINGS FROM THE ABYSS', headingCanvas.width / 2, headingCanvas.height * 0.38);
+  headingCtx.font = '400 84px "Space Grotesk", "Segoe UI", system-ui, sans-serif';
+  headingCtx.fillStyle = 'rgba(120, 220, 255, 0.72)';
+  headingCtx.fillText('Descend through sonar pulses and veils of vapor.', headingCanvas.width / 2, headingCanvas.height * 0.6);
+  headingCtx.fillStyle = 'rgba(90, 200, 255, 0.56)';
+  headingCtx.fillText('Neon beacons sweep the endless deep.', headingCanvas.width / 2, headingCanvas.height * 0.72);
+
+  const headingTexture = new THREE.CanvasTexture(headingCanvas);
+  headingTexture.colorSpace = THREE.SRGBColorSpace;
+  headingTexture.anisotropy = 4;
+  headingTexture.needsUpdate = true;
+
+  const headingUniforms = {
+    uTexture: { value: headingTexture },
+    uLensCenter: { value: new THREE.Vector2(0.5, 0.5) },
+    uLensStrength: { value: 0 },
+    uTime: { value: 0 }
+  };
+  const headingMaterial = new THREE.ShaderMaterial({
+    uniforms: headingUniforms,
+    vertexShader: `
+      varying vec2 vUv;
+      uniform vec2 uLensCenter;
+      uniform float uLensStrength;
+      uniform float uTime;
+      void main(){
+        vUv = uv;
+        vec2 offset = uv - uLensCenter;
+        float dist = length(offset);
+        float bend = uLensStrength * exp(-dist * 8.0);
+        vec3 displaced = position;
+        displaced.xy += offset * bend * 0.65;
+        displaced.z -= bend * 0.8;
+        displaced += normal * sin(uTime * 0.6 + dist * 18.0) * bend * 0.3;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(displaced, 1.0);
+      }
+    `,
+    fragmentShader: `
+      varying vec2 vUv;
+      uniform sampler2D uTexture;
+      uniform vec2 uLensCenter;
+      uniform float uLensStrength;
+      uniform float uTime;
+      void main(){
+        vec2 offset = vUv - uLensCenter;
+        float dist = length(offset);
+        float distortion = uLensStrength * 0.45;
+        vec2 refractUv = vUv + normalize(offset + vec2(0.0001)) * distortion / (dist * 6.0 + 0.18);
+        refractUv = clamp(refractUv, 0.0, 1.0);
+        vec4 tex = texture2D(uTexture, refractUv);
+        if (tex.a < 0.05) discard;
+        float halo = smoothstep(0.45, 0.0, dist) * uLensStrength * 1.4;
+        float pulse = sin(uTime * 1.6 + dist * 22.0) * 0.5 + 0.5;
+        vec3 color = tex.rgb + vec3(0.1, 0.4, 0.6) * halo + vec3(0.05, 0.2, 0.3) * pulse * uLensStrength;
+        gl_FragColor = vec4(color, tex.a);
+      }
+    `,
+    transparent: true,
+    depthWrite: false
+  });
+  const headingWidth = 5.8;
+  const headingHeight = 2.4;
+  const headingPlane = new THREE.Mesh(new THREE.PlaneGeometry(headingWidth, headingHeight, 96, 48), headingMaterial);
+  headingPlane.position.set(0, 0.75, 0.4);
+  scene.add(headingPlane);
+  const headingLensTarget = new THREE.Vector2(0.5, 0.5);
+  const headingLocal = new THREE.Vector3();
 
   const torus = new THREE.Mesh(
     new THREE.TorusKnotGeometry(1, 0.32, 320, 48, 2, 5),
@@ -368,7 +586,7 @@ $$.onReady(() => {
   neonTubeGroup.rotation.y = Math.PI / 5;
   scene.add(neonTubeGroup);
 
-  const mistCount = 1100;
+  const mistCount = isMobile ? 640 : 1100;
   const mistGeometry = new THREE.BufferGeometry();
   const mistPositions = new Float32Array(mistCount * 3);
   const mistVelocities = new Float32Array(mistCount);
@@ -399,27 +617,84 @@ $$.onReady(() => {
   mistField.position.y = -0.4;
   scene.add(mistField);
 
-  const clock = new THREE.Clock();
-  const lensVector = new THREE.Vector3();
-  const portalFocus = new THREE.Vector3(0, -0.05, 0);
+  const neonGridMaterial = new THREE.ShaderMaterial({
+    uniforms: {
+      uTime: { value: 0 },
+      uColorA: { value: new THREE.Color(0x0b8cff) },
+      uColorB: { value: new THREE.Color(0x09ffd8) },
+      uColorC: { value: new THREE.Color(0x2a9dff) }
+    },
+    vertexShader: `
+      varying vec2 vUv;
+      uniform float uTime;
+      void main(){
+        vUv = uv;
+        vec3 pos = position;
+        float waveX = sin((pos.x + uTime * 2.4) * 0.7);
+        float waveY = cos((pos.y - uTime * 1.6) * 0.9);
+        float ripple = sin((pos.x + pos.y) * 0.8 - uTime * 1.8);
+        pos.z += waveX * 0.45 + waveY * 0.35;
+        pos.z += ripple * 0.22;
+        pos.y += sin(uTime * 0.8 + pos.x * 0.4) * 0.05;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+      }
+    `,
+    fragmentShader: `
+      varying vec2 vUv;
+      uniform float uTime;
+      uniform vec3 uColorA;
+      uniform vec3 uColorB;
+      uniform vec3 uColorC;
+      void main(){
+        vec2 grid = fract(vUv * 12.0);
+        float line = min(min(grid.x, 1.0 - grid.x), min(grid.y, 1.0 - grid.y));
+        float glow = smoothstep(0.08, 0.0, line);
+        float pulse = sin(uTime * 2.0 + vUv.x * 10.0) * 0.5 + 0.5;
+        vec3 color = mix(uColorA, uColorB, pulse);
+        color = mix(color, uColorC, sin(uTime + vUv.y * 8.0) * 0.5 + 0.5);
+        gl_FragColor = vec4(color * (0.4 + glow * 1.6), glow * 0.85);
+      }
+    `,
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending
+  });
+  const neonGrid = new THREE.Mesh(new THREE.PlaneGeometry(28, 28, 140, 140), neonGridMaterial);
+  neonGrid.rotation.x = -Math.PI / 2;
+  neonGrid.position.set(0, -2.6, 0);
+  scene.add(neonGrid);
+  const neonGridMaterial2 = neonGridMaterial.clone();
+  neonGridMaterial2.uniforms = THREE.UniformsUtils.clone(neonGridMaterial.uniforms);
+  const neonGrid2 = new THREE.Mesh(new THREE.PlaneGeometry(24, 24, 120, 120), neonGridMaterial2);
+  neonGrid2.rotation.x = -Math.PI / 2;
+  neonGrid2.rotation.z = Math.PI / 6;
+  neonGrid2.position.set(0, -3.4, -5.5);
+  scene.add(neonGrid2);
 
-  function onResize(){
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    const dpr = window.devicePixelRatio;
-    renderer.setPixelRatio(dpr);
-    renderer.setSize(w, h);
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
-    backgroundTarget.setSize(w * dpr, h * dpr);
-  }
-  window.addEventListener('resize', onResize);
+  const clock = new THREE.Clock();
+  let elapsedTime = 0;
+  let isPaused = false;
+  let smoothedFps = 60;
+  const fpsSmoothing = isMobile ? 0.18 : 0.12;
 
   function animate(){
-    const delta = clock.getDelta();
-    const t = clock.elapsedTime;
+    const frameDelta = clock.getDelta();
+    const delta = isPaused ? 0 : frameDelta;
+    const rawFps = frameDelta > 0 ? 1 / frameDelta : 0;
+    smoothedFps += (rawFps - smoothedFps) * fpsSmoothing;
+    if (fpsValue) {
+      const fpsNumber = Math.min(240, Math.max(0, Math.round(smoothedFps)));
+      fpsValue.textContent = `FPS ${fpsNumber.toString().padStart(2, '0')}`;
+    }
+    if (!isPaused) {
+      elapsedTime += delta;
+    }
+    const t = elapsedTime;
     portalMaterial.uniforms.uTime.value = t;
     orbMaterial.uniforms.uTime.value = t;
+    neonGridMaterial.uniforms.uTime.value = t * 0.8;
+    neonGridMaterial2.uniforms.uTime.value = t * 0.65 + 1.3;
+    headingUniforms.uTime.value = t;
 
     torus.rotation.x = t * 0.34;
     torus.rotation.z = t * 0.18;
@@ -473,27 +748,35 @@ $$.onReady(() => {
         mistVelocities[i] = 0.2 + Math.random() * 0.45;
       }
     }
-    mistAttribute.needsUpdate = true;
+    if (delta > 0) {
+      mistAttribute.needsUpdate = true;
+    }
 
     const camRadius = 0.9 + Math.sin(t * 0.15) * 0.1;
     camera.position.x = Math.sin(t * 0.23) * camRadius;
     camera.position.y = 0.4 + Math.sin(t * 0.32) * 0.24;
     camera.position.z = 5.3 + Math.cos(t * 0.17) * 0.45;
     camera.lookAt(0, -0.05, 0);
-
-    if (heading) {
-      lensVector.copy(orb.position).project(camera);
-      if (lensVector.z < 1.0) {
-        const lensX = (lensVector.x * 0.5 + 0.5) * 100;
-        const lensY = (-lensVector.y * 0.5 + 0.5) * 100;
-        const strength = THREE.MathUtils.clamp(1 - orb.position.distanceTo(portalFocus) / 3.2, 0, 1);
-        heading.style.setProperty('--lens-x', `${lensX.toFixed(2)}%`);
-        heading.style.setProperty('--lens-y', `${lensY.toFixed(2)}%`);
-        heading.style.setProperty('--lens-strength', strength.toFixed(3));
-      } else {
-        heading.style.setProperty('--lens-strength', '0');
-      }
-    }
+    headingPlane.position.set(
+      Math.sin(t * 0.18) * 0.18,
+      0.75 + Math.sin(t * 0.32) * 0.08,
+      0.4 + Math.sin(t * 0.27) * 0.12
+    );
+    headingPlane.lookAt(camera.position);
+    headingPlane.rotation.z = Math.sin(t * 0.23) * 0.05;
+    headingPlane.updateMatrixWorld(true);
+    headingLocal.copy(orb.position);
+    headingPlane.worldToLocal(headingLocal);
+    const u = headingLocal.x / headingWidth + 0.5;
+    const v = headingLocal.y / headingHeight + 0.5;
+    const inside = u > -0.35 && u < 1.35 && v > -0.35 && v < 1.35;
+    const planarDistance = Math.hypot(headingLocal.x, headingLocal.y);
+    const depthAttenuation = Math.exp(-Math.abs(headingLocal.z) * 0.85);
+    const lensStrengthTarget = inside ? THREE.MathUtils.clamp(1.2 / (planarDistance + 0.45), 0, 1.05) * depthAttenuation : 0;
+    headingLensTarget.set(THREE.MathUtils.clamp(u, 0, 1), THREE.MathUtils.clamp(v, 0, 1));
+    headingUniforms.uLensCenter.value.lerp(headingLensTarget, 0.16);
+    headingUniforms.uLensStrength.value += (lensStrengthTarget - headingUniforms.uLensStrength.value) * 0.12;
+    headingUniforms.uLensStrength.value = THREE.MathUtils.clamp(headingUniforms.uLensStrength.value, 0, 1.1);
 
     orb.visible = false;
     renderer.setRenderTarget(backgroundTarget);
@@ -504,6 +787,79 @@ $$.onReady(() => {
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
   }
+
+  fullscreenToggle.addEventListener('click', () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().then(() => {
+        fullscreenToggle.textContent = 'Exit fullscreen';
+      }).catch(() => {});
+    } else {
+      document.exitFullscreen().catch(() => {}).finally(() => {
+        fullscreenToggle.textContent = 'Enter fullscreen';
+      });
+    }
+  });
+
+  document.addEventListener('fullscreenchange', () => {
+    fullscreenToggle.textContent = document.fullscreenElement ? 'Exit fullscreen' : 'Enter fullscreen';
+  });
+
+  let gyroBaseline = null;
+  let gyroActive = false;
+  let lastOrientationEvent = 0;
+  function updateStatus(message){
+    statusLine.textContent = message;
+  }
+  function onOrientation(event){
+    gyroActive = true;
+    lastOrientationEvent = performance.now();
+    if (!gyroBaseline) {
+      gyroBaseline = { alpha: event.alpha, beta: event.beta, gamma: event.gamma };
+      updateStatus('Gyroscope calibrated');
+    }
+  }
+  let orientationListenerAttached = false;
+  gyroButton.addEventListener('click', async () => {
+    function attachListener(){
+      if (!orientationListenerAttached) {
+        window.addEventListener('deviceorientation', onOrientation, { passive: true });
+        orientationListenerAttached = true;
+      }
+      gyroBaseline = null;
+      updateStatus('Calibrating… move device gently');
+    }
+    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+      try {
+        const permission = await DeviceOrientationEvent.requestPermission();
+        if (permission === 'granted') {
+          attachListener();
+        } else {
+          updateStatus('Gyroscope permission denied');
+        }
+      } catch (err) {
+        updateStatus('Gyroscope unavailable');
+      }
+    } else if ('DeviceOrientationEvent' in window) {
+      attachListener();
+    } else {
+      updateStatus('Gyroscope not supported');
+    }
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.code === 'Space') {
+      event.preventDefault();
+      isPaused = !isPaused;
+      updateStatus(isPaused ? 'Motion paused' : 'Motion resumed');
+    }
+  });
+
+  setInterval(() => {
+    if (gyroActive && performance.now() - lastOrientationEvent > 5000) {
+      gyroActive = false;
+      updateStatus('Gyroscope idle');
+    }
+  }, 4000);
 
   animate();
 });
