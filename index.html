@@ -12,107 +12,64 @@
 <title>a — alpha workspace</title>
 <style>
 :root{
-  --bg:#070b11;
-  --fg:#e9eef4;
-  --muted:#9fb0c3;
-  --card:#121821;
-  --accent:#ff7a00;
-  --neon-cyan:#46f8ff;
-  --neon-magenta:#ff47e0;
-  --neon-amber:#ffb347;
-  --radius:18px;
+  --bg:#02050a;
+  --fg:#b4f4c9;
+  --muted:#4ca86b;
+  --accent:#1ff042;
+  --accent-alt:#f4f000;
+  --scanline:rgba(0,32,16,.2);
+  --panel:#021b0f;
+  --border:#0d4d2a;
+  --shadow:#00000099;
+  --radius:12px;
+  --font:"IBM Plex Mono","Fira Mono","Courier New",monospace;
 }
-html,body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 "Inter",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-body{position:relative;min-height:100vh;overflow-x:hidden}
-.bg{position:fixed;inset:0;pointer-events:none;z-index:0;perspective:1200px;transform-style:preserve-3d;overflow:hidden}
-.bg__grid{position:absolute;top:50%;left:50%;width:200vmax;height:200vmax;transform:translate3d(-50%,-50%,var(--depth)) rotateX(72deg);background-image:repeating-linear-gradient(transparent 0 42px,rgba(79,144,255,.22) 42px 44px),repeating-linear-gradient(90deg,transparent 0 42px,rgba(255,122,0,.22) 42px 44px);background-size:64px 64px;animation:bg-grid-scroll var(--speed) linear infinite;opacity:.35;filter:drop-shadow(0 0 12px rgba(13,21,32,.6))}
-.bg__grid--near{--depth:-160px;--speed:16s;opacity:.55}
-.bg__grid--far{--depth:-420px;--speed:28s;background-size:82px 82px;opacity:.22}
-.bg__glow{position:absolute;inset:-35%;background:radial-gradient(circle at 65% 45%,rgba(255,122,0,.35),transparent 55%),radial-gradient(circle at 20% 20%,rgba(79,144,255,.35),transparent 50%),radial-gradient(circle at 80% 80%,rgba(75,217,176,.32),transparent 55%);transform:translateZ(-680px) scale(1);mix-blend-mode:screen;animation:bg-glow-pulse 20s ease-in-out infinite;opacity:.55}
-.bg__sphere{position:absolute;top:52%;left:65%;width:min(48vw,520px);aspect-ratio:1;border-radius:50%;background:
-    radial-gradient(circle at 20% 20%,rgba(255,255,255,.35),transparent 52%),
-    conic-gradient(from 90deg at 50% 50%,rgba(70,248,255,.55),rgba(255,71,224,.55),rgba(255,179,71,.65),rgba(70,248,255,.55));
-  box-shadow:0 0 28px rgba(70,248,255,.3),0 0 64px rgba(255,71,224,.25);
-  overflow:hidden;
-  transform:translate3d(-50%,-50%,-520px) rotateX(18deg);
-  animation:sphere-orbit 32s linear infinite;
-}
-.bg__sphere::before,
-.bg__sphere::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:
-    repeating-conic-gradient(from 0deg,rgba(10,20,32,.1) 0 5deg,rgba(10,20,32,0) 5deg 10deg),
-    repeating-linear-gradient(transparent 0 12%,rgba(14,25,38,.4) 12% 13%);
-  mix-blend-mode:screen;
-  opacity:.7;
-  animation:facet-spin 24s ease-in-out infinite;
-}
-.bg__sphere::after{
-  background:
-    repeating-conic-gradient(from 45deg,rgba(70,248,255,.3) 0 7deg,rgba(0,0,0,0) 7deg 14deg),
-    repeating-linear-gradient(90deg,transparent 0 10%,rgba(255,71,224,.35) 10% 12%);
-  mix-blend-mode:screen;
-  animation-duration:36s;
-  animation-direction:reverse;
-}
-@keyframes sphere-orbit{from{transform:translate3d(-50%,-50%,-520px) rotateX(18deg) rotateZ(0)}to{transform:translate3d(-50%,-50%,-520px) rotateX(18deg) rotateZ(360deg)}}
-@keyframes facet-spin{0%,100%{transform:rotateZ(0)}50%{transform:rotateZ(180deg)}}
-@keyframes bg-grid-scroll{from{background-position:0 0,0 0}to{background-position:0 128px,128px 0}}
-@keyframes bg-glow-pulse{0%,100%{transform:translateZ(-680px) scale(1)}50%{transform:translateZ(-680px) scale(1.12)}}
-@keyframes header-reveal{0%{transform:translateY(-18px);opacity:0}100%{transform:translateY(0);opacity:1}}
-@keyframes card-fade{0%{transform:translateY(18px) scale(.96);opacity:0}100%{transform:translateY(0) scale(1);opacity:1}}
-header{padding:28px 16px 18px;max-width:1100px;margin:auto;animation:header-reveal .9s cubic-bezier(.26,.72,.35,1) both}
-h1{margin:0 0 10px;font-size:32px;letter-spacing:.5px;text-transform:lowercase}
-.sub{color:var(--muted);max-width:640px}
-.menu{display:flex;flex-wrap:wrap;gap:10px;margin:26px 0 0;padding:0;list-style:none}
-.menu__item{appearance:none;border:none;padding:10px 18px;border-radius:999px;background:rgba(18,24,33,.65);color:var(--muted);font-weight:500;letter-spacing:.02em;cursor:pointer;position:relative;overflow:hidden;transition:color .35s ease,transform .35s ease}
-.menu__item::after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,rgba(255,71,224,.6),rgba(70,248,255,.55));opacity:0;transform:scaleX(.5);transition:opacity .35s ease,transform .35s ease;z-index:-1;box-shadow:0 0 22px rgba(70,248,255,.25)}
-.menu__item:hover{color:#fff;transform:translateY(-2px)}
-.menu__item:hover::after{opacity:.4;transform:scaleX(1)}
-.menu__item.is-active{color:#fff}
-.menu__item.is-active::after{opacity:.85;transform:scaleX(1)}
-.search{margin-top:26px;position:relative}
-.search::before{content:"";position:absolute;inset:-2px;background:linear-gradient(120deg,rgba(255,71,224,.6),rgba(70,248,255,.7),rgba(255,179,71,.6));border-radius:calc(var(--radius) + 6px);filter:blur(0);opacity:.9;z-index:0}
-.search input{position:relative;width:100%;padding:18px 18px 18px 20px;border-radius:var(--radius);border:1px solid rgba(70,248,255,.35);background:rgba(10,15,23,.9);color:var(--fg);font-size:17px;font-weight:500;box-shadow:0 16px 40px rgba(10,18,32,.45);backdrop-filter:blur(12px);outline:none;transition:border-color .35s ease,box-shadow .35s ease}
-.search input::placeholder{color:rgba(233,238,244,.7);font-style:italic}
-.search input:focus{border-color:rgba(255,71,224,.55);box-shadow:0 18px 48px rgba(20,28,44,.55),0 0 0 2px rgba(255,71,224,.2)}
-main{max-width:1100px;margin:12px auto 40px;padding:0 16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px}
-.card{background:linear-gradient(160deg,rgba(20,28,41,.94),rgba(10,14,22,.94));padding:20px;border-radius:20px;border:1px solid rgba(42,51,64,.85);box-shadow:0 16px 32px rgba(5,10,18,.45);display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden;transition:transform .4s cubic-bezier(.26,.72,.35,1),border-color .4s ease,box-shadow .4s ease;animation:card-fade .65s cubic-bezier(.26,.72,.35,1) both}
-.card::before{content:"";position:absolute;inset:-40% -40% auto;top:-55%;height:120%;background:radial-gradient(circle at center,rgba(70,248,255,.25),transparent 60%);opacity:0;transition:opacity .4s ease}
-.card:hover,.card:focus-within{transform:translateY(-6px) scale(1.015);border-color:rgba(70,248,255,.55);box-shadow:0 24px 48px rgba(6,12,20,.55)}
-.card:hover::before,.card:focus-within::before{opacity:1}
-.row{display:flex;gap:8px;align-items:center;justify-content:space-between}
-.btn{appearance:none;border:1px solid rgba(58,78,110,.6);background:rgba(15,19,25,.9);color:var(--fg);padding:9px 14px;border-radius:12px;text-decoration:none;font-weight:600;letter-spacing:.02em;transition:transform .35s ease,box-shadow .35s ease,border-color .35s ease;background-image:linear-gradient(120deg,rgba(255,71,224,.22),rgba(70,248,255,.2));box-shadow:0 12px 24px rgba(6,12,20,.4)}
-.btn:hover{border-color:rgba(70,248,255,.6);transform:translateY(-2px);box-shadow:0 16px 36px rgba(6,12,20,.5)}
-.tag{display:inline-block;font-size:12px;padding:4px 10px;border-radius:999px;background:rgba(27,35,48,.75);color:var(--muted);margin-right:6px;backdrop-filter:blur(6px)}
-.badge{font-size:12px;background:rgba(27,35,48,.8);border:1px solid rgba(58,78,110,.7);padding:2px 10px;border-radius:999px;letter-spacing:.04em;text-transform:uppercase}
-.card--empty{align-items:center;text-align:center;color:var(--muted);font-size:15px;font-style:italic}
-footer{max-width:1100px;margin:32px auto 24px;padding:0 16px;color:var(--muted);font-size:13px;position:relative;z-index:1}
-header,main,footer{position:relative;z-index:1}
+html,body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.4 var(--font);text-transform:none}
+body{min-height:100vh;display:flex;flex-direction:column;background-image:radial-gradient(circle at 10% 10%,rgba(0,64,32,.4),transparent 60%),radial-gradient(circle at 90% 20%,rgba(0,48,64,.35),transparent 65%),repeating-linear-gradient(0deg,var(--scanline) 0 2px,transparent 2px 4px)}
+*{box-sizing:border-box}
+header{padding:18px 16px 10px;max-width:980px;margin:0 auto 8px;border:1px solid var(--border);background:var(--panel);box-shadow:0 14px 32px var(--shadow);border-radius:var(--radius);position:relative;overflow:hidden}
+header::after{content:"READY.";position:absolute;top:10px;right:14px;color:var(--accent-alt);font-size:12px;letter-spacing:.2em;opacity:.65}
+h1{margin:0;font-size:26px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:10px}
+h1 span{display:inline-block;padding:2px 8px;background:linear-gradient(90deg,#f5f402,#ff7800,#ff0066,#003cff);color:#001d0f;border-radius:4px;font-size:14px;letter-spacing:.2em}
+.sub{color:var(--muted);max-width:640px;margin-top:6px;font-size:13px;text-transform:none}
+.menu{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 0;padding:0;list-style:none}
+.menu__item{appearance:none;border:1px solid var(--border);padding:6px 12px;border-radius:6px;background:rgba(0,24,12,.85);color:var(--muted);font-size:12px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .2s ease,color .2s ease}
+.menu__item:hover{background:rgba(0,36,18,.95);color:var(--fg)}
+.menu__item.is-active{background:var(--accent);color:#00210d;border-color:var(--accent-alt)}
+.search{margin-top:14px}
+.search input{width:100%;padding:12px 12px 10px;border-radius:6px;border:1px solid var(--border);background:rgba(0,16,8,.85);color:var(--fg);font:14px/1.4 var(--font);letter-spacing:.08em;text-transform:uppercase;outline:none}
+.search input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(31,240,66,.25)}
+main{flex:1;max-width:980px;margin:0 auto 24px;padding:0 16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 10px 24px var(--shadow);padding:14px 14px 16px;display:flex;flex-direction:column;gap:8px;position:relative}
+.card::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(180deg,rgba(31,240,66,.08) 0 2px,transparent 2px 4px);opacity:.25;pointer-events:none}
+.card strong{font-size:15px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.card .badge{align-self:flex-start;font-size:11px;padding:2px 6px;border:1px solid var(--accent-alt);color:var(--accent-alt);border-radius:4px;background:rgba(0,0,0,.35);letter-spacing:.18em;text-transform:uppercase}
+.card .description{font-size:13px;color:var(--fg);min-height:38px}
+.row{display:flex;gap:8px;align-items:flex-start;justify-content:space-between}
+.card dl{margin:0;padding:0;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:grid;grid-template-columns:minmax(0,1fr);row-gap:4px}
+.card dl div{display:flex;justify-content:space-between;gap:8px}
+.card dl dt{color:var(--accent-alt)}
+.card dl dd{margin:0;color:var(--fg);text-transform:none;font-size:12px;letter-spacing:0}
+.card .tags{display:flex;flex-wrap:wrap;gap:4px}
+.card .tag{font-size:10px;padding:2px 6px;border-radius:4px;background:rgba(0,32,16,.85);color:var(--accent);letter-spacing:.12em;text-transform:uppercase}
+.btn{appearance:none;border:1px solid var(--accent);background:rgba(0,24,12,.9);color:var(--accent);padding:8px 10px;border-radius:6px;text-decoration:none;font-size:12px;letter-spacing:.2em;text-transform:uppercase;text-align:center;transition:background .2s ease,color .2s ease}
+.btn:hover{background:var(--accent);color:#001b0f}
+.card--empty{align-items:center;text-align:center;color:var(--muted);font-size:13px;font-style:normal;text-transform:uppercase}
+footer{max-width:980px;margin:0 auto 24px;padding:12px 16px;border:1px solid var(--border);background:var(--panel);color:var(--muted);font-size:11px;letter-spacing:.16em;text-transform:uppercase;border-radius:var(--radius);box-shadow:0 12px 24px var(--shadow)}
 @media (max-width:720px){
-  .bg__sphere{left:50%;top:48%;width:420px;opacity:.4}
-  header{padding:24px 16px}
-  h1{font-size:28px}
-  .menu{margin-top:20px}
-  .search{margin-top:22px}
-  .search::before{inset:-1px}
+  header,footer{margin-inline:12px}
+  main{padding:0 12px}
+  h1{font-size:22px}
+  .card{padding:12px}
 }
 </style>
 </head>
 <body>
-<div class="bg">
-  <div class="bg__grid bg__grid--near"></div>
-  <div class="bg__grid bg__grid--far"></div>
-  <div class="bg__glow"></div>
-  <div class="bg__sphere" aria-hidden="true"></div>
-</div>
 <header>
-  <h1>a <span style="color:var(--accent)">alpha workspace</span></h1>
-  <div class="sub">One repo, many mini-apps. Versioned shared code at <code>/shared/vX</code>. Pure HTML5.</div>
+  <h1>a <span>ALPHA</span></h1>
+  <div class="sub">ONE REPO, MANY MINI-APPS. VERSIONED SHARED CODE AT <code>/shared/vX</code>. PURE HTML5.</div>
   <nav class="menu" id="status-menu" aria-label="Filter projects by status"></nav>
-  <div class="search"><input id="q" placeholder="Describe what you want to explore…"></div>
+  <div class="search"><input id="q" placeholder="TYPE TO FILTER PROJECTS"></div>
 </header>
 
 <main id="grid"></main>
@@ -140,7 +97,6 @@ function render(items, needle='', status='all'){
   const n = (needle||'').trim().toLowerCase();
   const s = (status||'all').toLowerCase();
   grid.innerHTML='';
-  let index = 0;
   for(const p of items){
     const hay = (p.title+' '+(p.tags||[]).join(' ')).toLowerCase();
     const itemStatus = (p.status||'unknown').toLowerCase();
@@ -148,20 +104,20 @@ function render(items, needle='', status='all'){
     if(s !== 'all' && itemStatus !== s) continue;
     const card = document.createElement('div');
     card.className='card';
-    card.style.animationDelay = `${Math.min(index*60,420)}ms`;
     card.innerHTML = `
       <div class="row">
-        <div><strong>${p.title}</strong></div>
-        <span class="badge">${p.status||'wip'}</span>
+        <strong>${p.title}</strong>
+        <span class="badge">${(p.status||'wip').toUpperCase()}</span>
       </div>
-      <div>${p.description||''}</div>
-      <div>${(p.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('')}</div>
-      <div class="row">
-        <a class="btn" href="${p.path}" target="_blank" rel="noopener">Open</a>
-        <small class="sub">shared: ${p.shared||'v1'} · ${p.updated||''}</small>
-      </div>`;
+      <div class="description">${p.description||'No description available.'}</div>
+      <dl>
+        <div><dt>PATH</dt><dd>${p.path||'—'}</dd></div>
+        <div><dt>UPDATED</dt><dd>${p.updated||'—'}</dd></div>
+        <div><dt>SHARED</dt><dd>${p.shared||'v1'}</dd></div>
+      </dl>
+      <div class="tags">${(p.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+      <a class="btn" href="${p.path}" target="_blank" rel="noopener">OPEN PROGRAM</a>`;
     grid.appendChild(card);
-    index++;
   }
   if(!grid.children.length){
     const empty = document.createElement('div');
