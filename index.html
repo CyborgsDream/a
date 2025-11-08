@@ -11,30 +11,94 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>a — alpha workspace</title>
 <style>
-:root{--bg:#0b0f14;--fg:#e9eef4;--muted:#9fb0c3;--card:#121821;--accent:#ff7a00}
-html,body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui}
+:root{
+  --bg:#070b11;
+  --fg:#e9eef4;
+  --muted:#9fb0c3;
+  --card:#121821;
+  --accent:#ff7a00;
+  --neon-cyan:#46f8ff;
+  --neon-magenta:#ff47e0;
+  --neon-amber:#ffb347;
+  --radius:18px;
+}
+html,body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 "Inter",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 body{position:relative;min-height:100vh;overflow-x:hidden}
-.bg{position:fixed;inset:0;pointer-events:none;z-index:0;perspective:900px;transform-style:preserve-3d}
-.bg__grid{position:absolute;top:50%;left:50%;width:200vmax;height:200vmax;transform:translate3d(-50%,-50%,var(--depth)) rotateX(72deg);background-image:repeating-linear-gradient(transparent 0 42px,rgba(79,144,255,.22) 42px 44px),repeating-linear-gradient(90deg,transparent 0 42px,rgba(255,122,0,.22) 42px 44px);background-size:64px 64px;animation:bg-grid-scroll var(--speed) linear infinite;opacity:.45;filter:drop-shadow(0 0 12px rgba(13,21,32,.6))}
-.bg__grid--near{--depth:-160px;--speed:16s;opacity:.65}
-.bg__grid--far{--depth:-420px;--speed:28s;background-size:82px 82px;opacity:.3}
-.bg__glow{position:absolute;inset:-35%;background:radial-gradient(circle at 65% 45%,rgba(255,122,0,.35),transparent 55%),radial-gradient(circle at 20% 20%,rgba(79,144,255,.4),transparent 50%),radial-gradient(circle at 80% 80%,rgba(75,217,176,.35),transparent 55%);transform:translateZ(-680px) scale(1);mix-blend-mode:screen;animation:bg-glow-pulse 20s ease-in-out infinite;opacity:.55}
+.bg{position:fixed;inset:0;pointer-events:none;z-index:0;perspective:1200px;transform-style:preserve-3d;overflow:hidden}
+.bg__grid{position:absolute;top:50%;left:50%;width:200vmax;height:200vmax;transform:translate3d(-50%,-50%,var(--depth)) rotateX(72deg);background-image:repeating-linear-gradient(transparent 0 42px,rgba(79,144,255,.22) 42px 44px),repeating-linear-gradient(90deg,transparent 0 42px,rgba(255,122,0,.22) 42px 44px);background-size:64px 64px;animation:bg-grid-scroll var(--speed) linear infinite;opacity:.35;filter:drop-shadow(0 0 12px rgba(13,21,32,.6))}
+.bg__grid--near{--depth:-160px;--speed:16s;opacity:.55}
+.bg__grid--far{--depth:-420px;--speed:28s;background-size:82px 82px;opacity:.22}
+.bg__glow{position:absolute;inset:-35%;background:radial-gradient(circle at 65% 45%,rgba(255,122,0,.35),transparent 55%),radial-gradient(circle at 20% 20%,rgba(79,144,255,.35),transparent 50%),radial-gradient(circle at 80% 80%,rgba(75,217,176,.32),transparent 55%);transform:translateZ(-680px) scale(1);mix-blend-mode:screen;animation:bg-glow-pulse 20s ease-in-out infinite;opacity:.55}
+.bg__sphere{position:absolute;top:52%;left:65%;width:min(48vw,520px);aspect-ratio:1;border-radius:50%;background:
+    radial-gradient(circle at 20% 20%,rgba(255,255,255,.35),transparent 52%),
+    conic-gradient(from 90deg at 50% 50%,rgba(70,248,255,.55),rgba(255,71,224,.55),rgba(255,179,71,.65),rgba(70,248,255,.55));
+  box-shadow:0 0 28px rgba(70,248,255,.3),0 0 64px rgba(255,71,224,.25);
+  overflow:hidden;
+  transform:translate3d(-50%,-50%,-520px) rotateX(18deg);
+  animation:sphere-orbit 32s linear infinite;
+}
+.bg__sphere::before,
+.bg__sphere::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    repeating-conic-gradient(from 0deg,rgba(10,20,32,.1) 0 5deg,rgba(10,20,32,0) 5deg 10deg),
+    repeating-linear-gradient(transparent 0 12%,rgba(14,25,38,.4) 12% 13%);
+  mix-blend-mode:screen;
+  opacity:.7;
+  animation:facet-spin 24s ease-in-out infinite;
+}
+.bg__sphere::after{
+  background:
+    repeating-conic-gradient(from 45deg,rgba(70,248,255,.3) 0 7deg,rgba(0,0,0,0) 7deg 14deg),
+    repeating-linear-gradient(90deg,transparent 0 10%,rgba(255,71,224,.35) 10% 12%);
+  mix-blend-mode:screen;
+  animation-duration:36s;
+  animation-direction:reverse;
+}
+@keyframes sphere-orbit{from{transform:translate3d(-50%,-50%,-520px) rotateX(18deg) rotateZ(0)}to{transform:translate3d(-50%,-50%,-520px) rotateX(18deg) rotateZ(360deg)}}
+@keyframes facet-spin{0%,100%{transform:rotateZ(0)}50%{transform:rotateZ(180deg)}}
 @keyframes bg-grid-scroll{from{background-position:0 0,0 0}to{background-position:0 128px,128px 0}}
 @keyframes bg-glow-pulse{0%,100%{transform:translateZ(-680px) scale(1)}50%{transform:translateZ(-680px) scale(1.12)}}
-header{padding:24px 16px;max-width:1100px;margin:auto}
-h1{margin:0 0 6px;font-size:28px}
-.sub{color:var(--muted)}
-.search{margin-top:16px}
-.search input{width:100%;padding:12px 14px;border-radius:10px;border:1px solid #2a3340;background:#0f1319;color:var(--fg)}
-main{max-width:1100px;margin:12px auto;padding:0 16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
-.card{background:var(--card);padding:16px;border-radius:16px;border:1px solid #1f2734;box-shadow:0 2px 12px rgba(0,0,0,.25);display:flex;flex-direction:column;gap:8px}
+@keyframes header-reveal{0%{transform:translateY(-18px);opacity:0}100%{transform:translateY(0);opacity:1}}
+@keyframes card-fade{0%{transform:translateY(18px) scale(.96);opacity:0}100%{transform:translateY(0) scale(1);opacity:1}}
+header{padding:28px 16px 18px;max-width:1100px;margin:auto;animation:header-reveal .9s cubic-bezier(.26,.72,.35,1) both}
+h1{margin:0 0 10px;font-size:32px;letter-spacing:.5px;text-transform:lowercase}
+.sub{color:var(--muted);max-width:640px}
+.menu{display:flex;flex-wrap:wrap;gap:10px;margin:26px 0 0;padding:0;list-style:none}
+.menu__item{appearance:none;border:none;padding:10px 18px;border-radius:999px;background:rgba(18,24,33,.65);color:var(--muted);font-weight:500;letter-spacing:.02em;cursor:pointer;position:relative;overflow:hidden;transition:color .35s ease,transform .35s ease}
+.menu__item::after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,rgba(255,71,224,.6),rgba(70,248,255,.55));opacity:0;transform:scaleX(.5);transition:opacity .35s ease,transform .35s ease;z-index:-1;box-shadow:0 0 22px rgba(70,248,255,.25)}
+.menu__item:hover{color:#fff;transform:translateY(-2px)}
+.menu__item:hover::after{opacity:.4;transform:scaleX(1)}
+.menu__item.is-active{color:#fff}
+.menu__item.is-active::after{opacity:.85;transform:scaleX(1)}
+.search{margin-top:26px;position:relative}
+.search::before{content:"";position:absolute;inset:-2px;background:linear-gradient(120deg,rgba(255,71,224,.6),rgba(70,248,255,.7),rgba(255,179,71,.6));border-radius:calc(var(--radius) + 6px);filter:blur(0);opacity:.9;z-index:0}
+.search input{position:relative;width:100%;padding:18px 18px 18px 20px;border-radius:var(--radius);border:1px solid rgba(70,248,255,.35);background:rgba(10,15,23,.9);color:var(--fg);font-size:17px;font-weight:500;box-shadow:0 16px 40px rgba(10,18,32,.45);backdrop-filter:blur(12px);outline:none;transition:border-color .35s ease,box-shadow .35s ease}
+.search input::placeholder{color:rgba(233,238,244,.7);font-style:italic}
+.search input:focus{border-color:rgba(255,71,224,.55);box-shadow:0 18px 48px rgba(20,28,44,.55),0 0 0 2px rgba(255,71,224,.2)}
+main{max-width:1100px;margin:12px auto 40px;padding:0 16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px}
+.card{background:linear-gradient(160deg,rgba(20,28,41,.94),rgba(10,14,22,.94));padding:20px;border-radius:20px;border:1px solid rgba(42,51,64,.85);box-shadow:0 16px 32px rgba(5,10,18,.45);display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden;transition:transform .4s cubic-bezier(.26,.72,.35,1),border-color .4s ease,box-shadow .4s ease;animation:card-fade .65s cubic-bezier(.26,.72,.35,1) both}
+.card::before{content:"";position:absolute;inset:-40% -40% auto;top:-55%;height:120%;background:radial-gradient(circle at center,rgba(70,248,255,.25),transparent 60%);opacity:0;transition:opacity .4s ease}
+.card:hover,.card:focus-within{transform:translateY(-6px) scale(1.015);border-color:rgba(70,248,255,.55);box-shadow:0 24px 48px rgba(6,12,20,.55)}
+.card:hover::before,.card:focus-within::before{opacity:1}
 .row{display:flex;gap:8px;align-items:center;justify-content:space-between}
-.btn{appearance:none;border:1px solid #2a3340;background:#0f1319;color:var(--fg);padding:8px 10px;border-radius:10px;text-decoration:none}
-.btn:hover{border-color:#364257}
-.tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;background:#1b2330;color:var(--muted);margin-right:6px}
-.badge{font-size:12px;background:#1b2330;border:1px solid #2a3340;padding:2px 8px;border-radius:999px}
-footer{max-width:1100px;margin:32px auto 24px;padding:0 16px;color:var(--muted);font-size:13px}
+.btn{appearance:none;border:1px solid rgba(58,78,110,.6);background:rgba(15,19,25,.9);color:var(--fg);padding:9px 14px;border-radius:12px;text-decoration:none;font-weight:600;letter-spacing:.02em;transition:transform .35s ease,box-shadow .35s ease,border-color .35s ease;background-image:linear-gradient(120deg,rgba(255,71,224,.22),rgba(70,248,255,.2));box-shadow:0 12px 24px rgba(6,12,20,.4)}
+.btn:hover{border-color:rgba(70,248,255,.6);transform:translateY(-2px);box-shadow:0 16px 36px rgba(6,12,20,.5)}
+.tag{display:inline-block;font-size:12px;padding:4px 10px;border-radius:999px;background:rgba(27,35,48,.75);color:var(--muted);margin-right:6px;backdrop-filter:blur(6px)}
+.badge{font-size:12px;background:rgba(27,35,48,.8);border:1px solid rgba(58,78,110,.7);padding:2px 10px;border-radius:999px;letter-spacing:.04em;text-transform:uppercase}
+.card--empty{align-items:center;text-align:center;color:var(--muted);font-size:15px;font-style:italic}
+footer{max-width:1100px;margin:32px auto 24px;padding:0 16px;color:var(--muted);font-size:13px;position:relative;z-index:1}
 header,main,footer{position:relative;z-index:1}
+@media (max-width:720px){
+  .bg__sphere{left:50%;top:48%;width:420px;opacity:.4}
+  header{padding:24px 16px}
+  h1{font-size:28px}
+  .menu{margin-top:20px}
+  .search{margin-top:22px}
+  .search::before{inset:-1px}
+}
 </style>
 </head>
 <body>
@@ -42,11 +106,13 @@ header,main,footer{position:relative;z-index:1}
   <div class="bg__grid bg__grid--near"></div>
   <div class="bg__grid bg__grid--far"></div>
   <div class="bg__glow"></div>
+  <div class="bg__sphere" aria-hidden="true"></div>
 </div>
 <header>
   <h1>a <span style="color:var(--accent)">alpha workspace</span></h1>
   <div class="sub">One repo, many mini-apps. Versioned shared code at <code>/shared/vX</code>. Pure HTML5.</div>
-  <div class="search"><input id="q" placeholder="Filter by name or tag…"></div>
+  <nav class="menu" id="status-menu" aria-label="Filter projects by status"></nav>
+  <div class="search"><input id="q" placeholder="Describe what you want to explore…"></div>
 </header>
 
 <main id="grid"></main>
@@ -56,6 +122,8 @@ header,main,footer{position:relative;z-index:1}
 <script type="module">
 const grid = document.querySelector('#grid');
 const q = document.querySelector('#q');
+const menu = document.querySelector('#status-menu');
+let activeStatus = 'all';
 
 async function getProjects(){
   try{
@@ -68,13 +136,19 @@ async function getProjects(){
   }
 }
 
-function render(items, needle=''){
+function render(items, needle='', status='all'){
   const n = (needle||'').trim().toLowerCase();
+  const s = (status||'all').toLowerCase();
   grid.innerHTML='';
+  let index = 0;
   for(const p of items){
     const hay = (p.title+' '+(p.tags||[]).join(' ')).toLowerCase();
+    const itemStatus = (p.status||'unknown').toLowerCase();
     if(n && !hay.includes(n)) continue;
-    const card = document.createElement('div'); card.className='card';
+    if(s !== 'all' && itemStatus !== s) continue;
+    const card = document.createElement('div');
+    card.className='card';
+    card.style.animationDelay = `${Math.min(index*60,420)}ms`;
     card.innerHTML = `
       <div class="row">
         <div><strong>${p.title}</strong></div>
@@ -83,16 +157,42 @@ function render(items, needle=''){
       <div>${p.description||''}</div>
       <div>${(p.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('')}</div>
       <div class="row">
-        <a class="btn" href="${p.path}" target="_blank">Open</a>
+        <a class="btn" href="${p.path}" target="_blank" rel="noopener">Open</a>
         <small class="sub">shared: ${p.shared||'v1'} · ${p.updated||''}</small>
       </div>`;
     grid.appendChild(card);
+    index++;
+  }
+  if(!grid.children.length){
+    const empty = document.createElement('div');
+    empty.className='card card--empty';
+    empty.innerHTML = 'No projects match yet — try another keyword or status.';
+    grid.appendChild(empty);
   }
 }
 
+function buildMenu(items){
+  if(!menu) return;
+  const statuses = Array.from(new Set(items.map(p=>(p.status||'unknown').toLowerCase()))).sort();
+  const options = ['all',...statuses];
+  menu.innerHTML = options.map(status=>{
+    const label = status==='all' ? 'All projects' : status.replace(/(^|\s)\w/g,ch=>ch.toUpperCase());
+    const activeClass = status===activeStatus ? ' is-active' : '';
+    return `<button class="menu__item${activeClass}" type="button" data-filter="${status}">${label}</button>`;
+  }).join('');
+  menu.querySelectorAll('.menu__item').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      activeStatus = btn.dataset.filter;
+      menu.querySelectorAll('.menu__item').forEach(el=>el.classList.toggle('is-active',el===btn));
+      render(items, q.value, activeStatus);
+    });
+  });
+}
+
 getProjects().then(items=>{
-  render(items);
-  q.addEventListener('input', e=>render(items, e.target.value));
+  buildMenu(items);
+  render(items, '', activeStatus);
+  q.addEventListener('input', e=>render(items, e.target.value, activeStatus));
 });
 </script>
 </body>
