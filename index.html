@@ -12,69 +12,70 @@
 <title>a — alpha workspace</title>
 <style>
 :root{
-  --bg:#02050a;
-  --fg:#b4f4c9;
-  --muted:#4ca86b;
-  --accent:#1ff042;
-  --accent-alt:#f4f000;
-  --scanline:rgba(0,32,16,.2);
-  --panel:#021b0f;
-  --border:#0d4d2a;
-  --shadow:#00000099;
-  --radius:12px;
-  --font:"IBM Plex Mono","Fira Mono","Courier New",monospace;
+  --bg:#011627;
+  --bezel:#0b2236;
+  --screen:#052a42;
+  --glow:rgba(96,255,230,.12);
+  --fg:#b9ffe3;
+  --muted:#7dc2ad;
+  --accent:#6af7ff;
+  --alert:#f5f094;
+  --font:"IBM Plex Mono","VT323","Fira Mono","Courier New",monospace;
 }
-html,body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.4 var(--font);text-transform:none}
-body{min-height:100vh;display:flex;flex-direction:column;background-image:radial-gradient(circle at 10% 10%,rgba(0,64,32,.4),transparent 60%),radial-gradient(circle at 90% 20%,rgba(0,48,64,.35),transparent 65%),repeating-linear-gradient(0deg,var(--scanline) 0 2px,transparent 2px 4px)}
 *{box-sizing:border-box}
-header{padding:18px 16px 10px;max-width:980px;margin:0 auto 8px;border:1px solid var(--border);background:var(--panel);box-shadow:0 14px 32px var(--shadow);border-radius:var(--radius);position:relative;overflow:hidden}
-header::after{content:"READY.";position:absolute;top:10px;right:14px;color:var(--accent-alt);font-size:12px;letter-spacing:.2em;opacity:.65}
-h1{margin:0;font-size:26px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:10px}
-h1 span{display:inline-block;padding:2px 8px;background:linear-gradient(90deg,#f5f402,#ff7800,#ff0066,#003cff);color:#001d0f;border-radius:4px;font-size:14px;letter-spacing:.2em}
-.sub{color:var(--muted);max-width:640px;margin-top:6px;font-size:13px;text-transform:none}
-.menu{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 0;padding:0;list-style:none}
-.menu__item{appearance:none;border:1px solid var(--border);padding:6px 12px;border-radius:6px;background:rgba(0,24,12,.85);color:var(--muted);font-size:12px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .2s ease,color .2s ease}
-.menu__item:hover{background:rgba(0,36,18,.95);color:var(--fg)}
-.menu__item.is-active{background:var(--accent);color:#00210d;border-color:var(--accent-alt)}
-.search{margin-top:14px}
-.search input{width:100%;padding:12px 12px 10px;border-radius:6px;border:1px solid var(--border);background:rgba(0,16,8,.85);color:var(--fg);font:14px/1.4 var(--font);letter-spacing:.08em;text-transform:uppercase;outline:none}
-.search input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(31,240,66,.25)}
-main{flex:1;max-width:980px;margin:0 auto 24px;padding:0 16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
-.card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 10px 24px var(--shadow);padding:14px 14px 16px;display:flex;flex-direction:column;gap:8px;position:relative}
-.card::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(180deg,rgba(31,240,66,.08) 0 2px,transparent 2px 4px);opacity:.25;pointer-events:none}
-.card strong{font-size:15px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
-.card .badge{align-self:flex-start;font-size:11px;padding:2px 6px;border:1px solid var(--accent-alt);color:var(--accent-alt);border-radius:4px;background:rgba(0,0,0,.35);letter-spacing:.18em;text-transform:uppercase}
-.card .description{font-size:13px;color:var(--fg);min-height:38px}
-.row{display:flex;gap:8px;align-items:flex-start;justify-content:space-between}
-.card dl{margin:0;padding:0;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:grid;grid-template-columns:minmax(0,1fr);row-gap:4px}
-.card dl div{display:flex;justify-content:space-between;gap:8px}
-.card dl dt{color:var(--accent-alt)}
-.card dl dd{margin:0;color:var(--fg);text-transform:none;font-size:12px;letter-spacing:0}
-.card .tags{display:flex;flex-wrap:wrap;gap:4px}
-.card .tag{font-size:10px;padding:2px 6px;border-radius:4px;background:rgba(0,32,16,.85);color:var(--accent);letter-spacing:.12em;text-transform:uppercase}
-.btn{appearance:none;border:1px solid var(--accent);background:rgba(0,24,12,.9);color:var(--accent);padding:8px 10px;border-radius:6px;text-decoration:none;font-size:12px;letter-spacing:.2em;text-transform:uppercase;text-align:center;transition:background .2s ease,color .2s ease}
-.btn:hover{background:var(--accent);color:#001b0f}
-.card--empty{align-items:center;text-align:center;color:var(--muted);font-size:13px;font-style:normal;text-transform:uppercase}
-footer{max-width:980px;margin:0 auto 24px;padding:12px 16px;border:1px solid var(--border);background:var(--panel);color:var(--muted);font-size:11px;letter-spacing:.16em;text-transform:uppercase;border-radius:var(--radius);box-shadow:0 12px 24px var(--shadow)}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--fg);font:15px/1.5 var(--font);text-transform:uppercase;letter-spacing:.08em}
+body{display:flex;align-items:center;justify-content:center;padding:20px}
+.bezel{width:clamp(320px,96vw,1180px);background:var(--bezel);border:3px solid #0d324b;box-shadow:0 18px 36px rgba(0,0,0,.6),0 0 0 4px #04131f inset;border-radius:14px;padding:10px}
+.screen{background:radial-gradient(circle at 50% 20%,var(--glow),transparent 45%),var(--screen);border:2px solid #0a3d58;border-radius:8px;box-shadow:0 0 24px rgba(0,0,0,.8) inset;aspect-ratio:19/6;min-height:360px;display:flex;flex-direction:column;padding:12px 14px;gap:10px;overflow:hidden;position:relative}
+.screen::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.05) 0 2px,transparent 2px 4px);mix-blend-mode:screen;opacity:.25;pointer-events:none}
+.masthead{display:flex;flex-direction:column;gap:4px;border-bottom:1px solid rgba(255,255,255,.15);padding-bottom:6px}
+.masthead__title{display:flex;gap:10px;align-items:center;font-size:17px;color:var(--accent)}
+.masthead__title span{display:inline-block;background:rgba(0,0,0,.2);padding:2px 6px;border:1px solid var(--accent);box-shadow:0 0 8px var(--glow) inset;font-weight:700}
+.masthead__meta{color:var(--muted);font-size:12px;letter-spacing:.12em}
+.status-line{display:flex;gap:8px;font-size:12px;color:var(--alert)}
+.controls{display:grid;grid-template-columns:1fr;gap:6px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.12)}
+.menu{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.menu__item{appearance:none;border:1px solid rgba(255,255,255,.2);background:transparent;color:var(--fg);padding:4px 8px;font:inherit;cursor:pointer;letter-spacing:.12em;transition:background .15s ease,color .15s ease;border-radius:4px;box-shadow:0 0 0 1px rgba(0,0,0,.35) inset}
+.menu__item:hover{background:rgba(255,255,255,.08)}
+.menu__item.is-active{background:rgba(106,247,255,.15);color:var(--accent);border-color:var(--accent)}
+.search{display:flex;align-items:center;gap:8px}
+.search span{color:var(--alert);font-size:12px}
+.search input{flex:1;appearance:none;background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.24);color:var(--fg);padding:6px 8px;font:inherit;letter-spacing:.12em;text-transform:uppercase;outline:none;border-radius:4px;box-shadow:0 0 0 1px rgba(0,0,0,.5) inset}
+.search input:focus{border-color:var(--accent);box-shadow:0 0 0 1px rgba(0,0,0,.5) inset,0 0 0 2px rgba(106,247,255,.4)}
+main{flex:1;overflow:auto;display:flex;flex-direction:column;gap:10px;padding:6px 2px}
+.program{background:rgba(0,0,0,.12);border:1px solid rgba(255,255,255,.16);padding:8px 10px;border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,.35) inset,0 0 0 1px rgba(0,0,0,.4) inset;display:grid;gap:4px;position:relative}
+.program::before{content:"◼";position:absolute;left:6px;top:8px;color:var(--accent);opacity:.8;font-size:10px}
+.program__header{display:flex;justify-content:space-between;gap:10px;color:var(--accent);font-weight:700}
+.program__meta{font-size:11px;color:var(--muted);letter-spacing:.1em}
+.program__desc{font-size:13px;color:var(--fg);text-transform:none;letter-spacing:.02em}
+.program__tags{display:flex;flex-wrap:wrap;gap:6px;font-size:10px;color:var(--accent)}
+.program__link{justify-self:end;text-decoration:none;color:var(--alert);padding:4px 6px;border:1px solid rgba(245,240,148,.6);border-radius:4px;background:rgba(245,240,148,.08);letter-spacing:.16em}
+.program__link:hover{background:rgba(245,240,148,.15)}
+.card--empty{color:var(--muted);text-align:center;padding:14px;border:1px dashed rgba(255,255,255,.3)}
+.footer-line{border-top:1px solid rgba(255,255,255,.12);padding-top:6px;font-size:11px;color:var(--muted);letter-spacing:.12em}
 @media (max-width:720px){
-  header,footer{margin-inline:12px}
-  main{padding:0 12px}
-  h1{font-size:22px}
-  .card{padding:12px}
+  body{padding:12px}
+  .screen{aspect-ratio:auto;min-height:0}
+  .masthead__title{font-size:15px}
 }
 </style>
 </head>
 <body>
-<header>
-  <h1>a <span>ALPHA</span></h1>
-  <div class="sub">ONE REPO, MANY MINI-APPS. VERSIONED SHARED CODE AT <code>/shared/vX</code>. PURE HTML5.</div>
-  <nav class="menu" id="status-menu" aria-label="Filter projects by status"></nav>
-  <div class="search"><input id="q" placeholder="TYPE TO FILTER PROJECTS"></div>
-</header>
-
-<main id="grid"></main>
-
-<footer>Version <strong>v0.1.0</strong>. To bump, edit the header block.</footer>
+<div class="bezel">
+  <div class="screen">
+    <header class="masthead">
+      <div class="masthead__title">A — ALPHA WORKSPACE <span>READY</span></div>
+      <div class="masthead__meta">MULTI-PROGRAM DIRECTORY · PURE HTML5 · SHARED CODE AT /SHARED/VX</div>
+      <div class="status-line">DISPLAY MODE: COMMODORE-LIKE TEXT · ASPECT 19:6 WIDE</div>
+    </header>
+    <section class="controls">
+      <nav class="menu" id="status-menu" aria-label="Filter projects by status"></nav>
+      <label class="search"><span>SEARCH</span><input id="q" placeholder="TYPE TO FILTER"></label>
+    </section>
+    <main id="grid" role="list"></main>
+    <div class="footer-line">VERSION V0.1.0 · EDIT HEADER BLOCK TO BUMP</div>
+  </div>
+</div>
 
 <script id="embedded-projects" type="application/json" data-source="projects.json">
 [
@@ -180,26 +181,24 @@ function render(items, needle='', status='all'){
     const itemStatus = (p.status||'unknown').toLowerCase();
     if(n && !hay.includes(n)) continue;
     if(s !== 'all' && itemStatus !== s) continue;
-    const card = document.createElement('div');
-    card.className='card';
-    card.innerHTML = `
-      <div class="row">
-        <strong>${p.title}</strong>
-        <span class="badge">${(p.status||'wip').toUpperCase()}</span>
+    const program = document.createElement('article');
+    program.className='program';
+    program.setAttribute('role','listitem');
+    const tags = (p.tags||[]).map(t=>`<span>${t}</span>`).join(' ');
+    program.innerHTML = `
+      <div class="program__header">
+        <span>${p.title}</span>
+        <span>[${(p.status||'wip').toUpperCase()}]</span>
       </div>
-      <div class="description">${p.description||'No description available.'}</div>
-      <dl>
-        <div><dt>PATH</dt><dd>${p.path||'—'}</dd></div>
-        <div><dt>UPDATED</dt><dd>${p.updated||'—'}</dd></div>
-        <div><dt>SHARED</dt><dd>${p.shared||'v1'}</dd></div>
-      </dl>
-      <div class="tags">${(p.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('')}</div>
-      <a class="btn" href="${p.path}" target="_blank" rel="noopener">OPEN PROGRAM</a>`;
-    grid.appendChild(card);
+      <div class="program__meta">#${p.slug||'unknown'} · PATH ${p.path||'—'} · SHARED ${p.shared||'v1'} · UPDATED ${p.updated||'—'}</div>
+      <div class="program__desc">${p.description||'No description available.'}</div>
+      <div class="program__tags">${tags}</div>
+      <a class="program__link" href="${p.path}" target="_blank" rel="noopener">RUN PROGRAM</a>`;
+    grid.appendChild(program);
   }
   if(!grid.children.length){
     const empty = document.createElement('div');
-    empty.className='card card--empty';
+    empty.className='card--empty';
     empty.innerHTML = 'No projects match yet — try another keyword or status.';
     grid.appendChild(empty);
   }
